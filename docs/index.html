@@ -1,17 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>GLS Green Database</title>
-</head>
-<body>
-  <h1>GLS Green Database</h1>
-  <p>Nighttime Lights Dataset</p>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <a href="data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jatim_Monthly.csv"
-   download
-   type="text/csv">
-  Download NTL Kab/Kota Monthly (CSV)
-</a>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f4f8f4;
+      color: #2e3d2f;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1b5e20, #2e7d32);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .dataset-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      transition: 0.3s;
+    }
+
+    .dataset-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    }
+
+    .dataset-card h2 {
+      margin-top: 0;
+      color: #1b5e20;
+    }
+
+    .dataset-meta {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .download-btn {
+      display: inline-block;
+      padding: 10px 18px;
+      background-color: #2e7d32;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .download-btn:hover {
+      background-color: #1b5e20;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 10px;
+      background-color: #e8f5e9;
+      font-size: 14px;
+      color: #555;
+      margin-top: 50px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>GLS Green Database</h1>
+    <p>Green Living Support Environmental Data Repository</p>
+  </header>
+
+  <div class="container">
+
+    <div class="dataset-card">
+      <h2>Nighttime Lights – Kab/Kota (Monthly)</h2>
+      <div class="dataset-meta">
+        Source: VIIRS DNB • Level: Kabupaten/Kota • Period: 2012–Latest • Format: CSV
+      </div>
+
+      <p>
+        Dataset intensitas cahaya malam (Nighttime Lights) hasil ekstraksi
+        Google Earth Engine pada level kabupaten/kota di Jawa Timur.
+        Digunakan sebagai proxy aktivitas ekonomi dan urbanisasi.
+      </p>
+
+      <a href="data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jatim_Monthly.csv"
+         class="download-btn"
+         download
+         type="text/csv">
+         ⬇ Download Dataset
+      </a>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 Green Living Support (GLS) • Environmental Data Initiative
+  </footer>
 
 </body>
 </html>
