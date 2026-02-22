@@ -70,9 +70,10 @@ select {
 }
 
 #map {
-  height: 400px;
+  height: 500px;
   border-radius: 10px;
   margin-top: 20px;
+  border: 2px solid #ddd;
 }
 
 footer {
@@ -122,9 +123,7 @@ footer {
 
 </div>
 
-<a id="downloadLink"
-   class="download-btn"
-   download>
+<a id="downloadLink" class="download-btn" download>
 ⬇ Download Dataset
 </a>
 
@@ -142,7 +141,7 @@ footer {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-// 1. Tambahkan koordinat [lat, lng] untuk setiap provinsi agar peta tahu ke mana harus bergerak
+// Data Mapping Provinsi & Koordinat
 const provinceMap = {
   "Aceh": { code: "Aceh", coords: [4.6951, 96.7494] },
   "Sumatera Utara": { code: "Sumut", coords: [2.1121, 99.1777] },
@@ -185,6 +184,7 @@ const provinceMap = {
 };
 
 const provinceSelect = document.getElementById("provinceSelect");
+let geojsonLayer;
 
 // Isi dropdown
 Object.keys(provinceMap).forEach(p => {
@@ -200,30 +200,58 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Inisialisasi Marker (kosong dulu)
-var marker = L.marker([-2.5, 118]).addTo(map);
+// Load Data GeoJSON untuk Border & Highlight
+fetch('https://raw.githubusercontent.com')
+  .then(response => response.json())
+  .then(data => {
+    geojsonLayer = L.geoJson(data, {
+      style: {
+        fillColor: '#2e7d32',
+        weight: 1,
+        opacity: 1,
+        color: 'white',
+        fillOpacity: 0.1
+      },
+      onEachFeature: function(feature, layer) {
+        layer.on('click', function() {
+          // Sinkronisasi klik peta ke dropdown
+          const clickedProv = feature.properties.Propinsi;
+          provinceSelect.value = clickedProv;
+          updateDownload();
+        });
+      }
+    }).addTo(map);
+  });
 
 function updateDownload() {
-  const provinceName = provinceSelect.value;
+  const selectedProv = provinceSelect.value;
   const level = document.getElementById("levelSelect").value;
   const period = document.getElementById("periodSelect").value;
-  
   const link = document.getElementById("downloadLink");
   const notice = document.getElementById("notice");
-  
-  // FITUR UPDATE PETA: Pindahkan view dan pindahkan marker
-  const provinceData = provinceMap[provinceName];
-  if (provinceData) {
-    map.setView(provinceData.coords, 7); // Zoom ke level 7
-    marker.setLatLng(provinceData.coords); // Pindahkan marker ke provinsi
-    marker.bindPopup(`<b>${provinceName}</b>`).openPopup();
+
+  // FITUR 1: Highlight Wilayah & Gerakan Kamera
+  if (geojsonLayer) {
+    geojsonLayer.eachLayer(function(layer) {
+      if (layer.feature.properties.Propinsi.toUpperCase() === selectedProv.toUpperCase()) {
+        layer.setStyle({
+          fillColor: '#ffa000', // Highlight Oranye
+          fillOpacity: 0.5,
+          weight: 3,
+          color: '#1b5e20'
+        });
+        map.flyTo(layer.getBounds().getCenter(), 7); // Efek transisi smooth
+      } else {
+        geojsonLayer.resetStyle(layer);
+      }
+    });
   }
 
-  // Logika Download
-  if (level === "kabkota" && period === "monthly") {
+  // FITUR 2: Logika Download Link
+  const provinceData = provinceMap[selectedProv];
+  if (level === "kabkota" && period === "monthly" && provinceData) {
     const fileCode = provinceData.code;
     const filename = `NTL_KabKota_${fileCode}_Monthly.csv`;
-
     link.href = `data/kabkota/nighttime_lights/monthly/${filename}`;
     link.classList.remove("disabled");
     notice.textContent = "";
@@ -239,8 +267,8 @@ provinceSelect.addEventListener("change", updateDownload);
 document.getElementById("levelSelect").addEventListener("change", updateDownload);
 document.getElementById("periodSelect").addEventListener("change", updateDownload);
 
-// Run saat pertama kali load
-updateDownload();
+// Inisialisasi awal (delay sedikit agar GeoJSON ter-load dulu)
+setTimeout(updateDownload, 800);
 
 </script>
 
