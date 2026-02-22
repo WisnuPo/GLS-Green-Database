@@ -5,7 +5,7 @@
 <title>GLS Green Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css""")/>>
 
 <style>
 body {
@@ -141,46 +141,46 @@ footer {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-// Data Mapping Provinsi & Koordinat
+// Data Mapping Provinsi
 const provinceMap = {
-  "Aceh": { code: "Aceh", coords: [4.6951, 96.7494] },
-  "Sumatera Utara": { code: "Sumut", coords: [2.1121, 99.1777] },
-  "Sumatera Barat": { code: "Sumbar", coords: [-0.7399, 100.8000] },
-  "Riau": { code: "Riau", coords: [0.5071, 101.4478] },
-  "Kepulauan Riau": { code: "Kepri", coords: [3.9456, 108.1429] },
-  "Jambi": { code: "Jambi", coords: [-1.6186, 103.6131] },
-  "Sumatera Selatan": { code: "Sumsel", coords: [-3.3194, 104.9145] },
-  "Bangka Belitung": { code: "KepBabel", coords: [-2.7411, 106.4406] },
-  "Bengkulu": { code: "Bengkulu", coords: [-3.7928, 102.2608] },
-  "Lampung": { code: "Lampung", coords: [-4.5586, 105.4068] },
-  "DKI Jakarta": { code: "DKI_Jakarta", coords: [-6.2088, 106.8456] },
-  "Jawa Barat": { code: "Jabar", coords: [-7.0909, 107.6689] },
-  "Jawa Tengah": { code: "Jateng", coords: [-7.1510, 110.1403] },
-  "DI Yogyakarta": { code: "DIY", coords: [-7.8754, 110.4262] },
-  "Jawa Timur": { code: "Jatim", coords: [-7.5361, 112.2384] },
-  "Banten": { code: "Banten", coords: [-6.4058, 106.0640] },
-  "Bali": { code: "Bali", coords: [-8.4095, 115.1889] },
-  "Nusa Tenggara Barat": { code: "NTB", coords: [-8.6529, 117.3616] },
-  "Nusa Tenggara Timur": { code: "NTT", coords: [-8.6574, 121.0794] },
-  "Kalimantan Barat": { code: "Kalbar", coords: [-0.2788, 109.9754] },
-  "Kalimantan Tengah": { code: "Kalteng", coords: [-1.6815, 113.3824] },
-  "Kalimantan Selatan": { code: "Kalsel", coords: [-3.0926, 115.2838] },
-  "Kalimantan Timur": { code: "Kaltim", coords: [0.5387, 116.4194] },
-  "Kalimantan Utara": { code: "Kalut", coords: [3.0731, 116.0414] },
-  "Sulawesi Utara": { code: "Sulut", coords: [0.6247, 123.9750] },
-  "Gorontalo": { code: "Gorontalo", coords: [0.6999, 122.4467] },
-  "Sulawesi Tengah": { code: "Sulteng", coords: [-1.4300, 121.4456] },
-  "Sulawesi Barat": { code: "Sulbar", coords: [-2.8440, 119.2321] },
-  "Sulawesi Selatan": { code: "Sulsel", coords: [-3.6688, 119.9741] },
-  "Sulawesi Tenggara": { code: "Sultra", coords: [-4.1449, 122.1746] },
-  "Maluku": { code: "Maluku", coords: [-3.2385, 130.1453] },
-  "Maluku Utara": { code: "Malut", coords: [1.5709, 127.8088] },
-  "Papua": { code: "Papua", coords: [-2.3048, 140.0163] },
-  "Papua Barat": { code: "PB", coords: [-1.3361, 133.1747] },
-  "Papua Selatan": { code: "PS", coords: [-7.5138, 139.0225] },
-  "Papua Tengah": { code: "PT", coords: [-3.9174, 135.9404] },
-  "Papua Pegunungan": { code: "PP", coords: [-4.0537, 139.1171] },
-  "Papua Barat Daya": { code: "PBD", coords: [-1.0503, 132.0628] }
+  "Aceh": "Aceh",
+  "Sumatera Utara": "Sumut",
+  "Sumatera Barat": "Sumbar",
+  "Riau": "Riau",
+  "Kepulauan Riau": "Kepri",
+  "Jambi": "Jambi",
+  "Sumatera Selatan": "Sumsel",
+  "Bangka Belitung": "KepBabel",
+  "Bengkulu": "Bengkulu",
+  "Lampung": "Lampung",
+  "DKI Jakarta": "DKI_Jakarta",
+  "Jawa Barat": "Jabar",
+  "Jawa Tengah": "Jateng",
+  "DI Yogyakarta": "DIY",
+  "Jawa Timur": "Jatim",
+  "Banten": "Banten",
+  "Bali": "Bali",
+  "Nusa Tenggara Barat": "NTB",
+  "Nusa Tenggara Timur": "NTT",
+  "Kalimantan Barat": "Kalbar",
+  "Kalimantan Tengah": "Kalteng",
+  "Kalimantan Selatan": "Kalsel",
+  "Kalimantan Timur": "Kaltim",
+  "Kalimantan Utara": "Kalut",
+  "Sulawesi Utara": "Sulut",
+  "Gorontalo": "Gorontalo",
+  "Sulawesi Tengah": "Sulteng",
+  "Sulawesi Barat": "Sulbar",
+  "Sulawesi Selatan": "Sulsel",
+  "Sulawesi Tenggara": "Sultra",
+  "Maluku": "Maluku",
+  "Maluku Utara": "Malut",
+  "Papua": "Papua",
+  "Papua Barat": "PB",
+  "Papua Selatan": "PS",
+  "Papua Tengah": "PT",
+  "Papua Pegunungan": "PP",
+  "Papua Barat Daya": "PBD"
 };
 
 const provinceSelect = document.getElementById("provinceSelect");
@@ -200,7 +200,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Load Data GeoJSON untuk Border & Highlight
+// Load GeoJSON (URL Diperbaiki)
 fetch('https://raw.githubusercontent.com')
   .then(response => response.json())
   .then(data => {
@@ -214,13 +214,20 @@ fetch('https://raw.githubusercontent.com')
       },
       onEachFeature: function(feature, layer) {
         layer.on('click', function() {
-          // Sinkronisasi klik peta ke dropdown
-          const clickedProv = feature.properties.Propinsi;
-          provinceSelect.value = clickedProv;
+          // Cari nama yang paling mirip di dropdown (menghindari error case-sensitive)
+          const clickedName = feature.properties.Propinsi.toUpperCase().trim();
+          for (let option of provinceSelect.options) {
+            if (option.value.toUpperCase().trim() === clickedName) {
+              provinceSelect.value = option.value;
+              break;
+            }
+          }
           updateDownload();
         });
       }
     }).addTo(map);
+    // Jalankan update setelah data siap
+    updateDownload();
   });
 
 function updateDownload() {
@@ -230,27 +237,30 @@ function updateDownload() {
   const link = document.getElementById("downloadLink");
   const notice = document.getElementById("notice");
 
-  // FITUR 1: Highlight Wilayah & Gerakan Kamera
+  // FITUR HIGHLIGHT
   if (geojsonLayer) {
     geojsonLayer.eachLayer(function(layer) {
-      if (layer.feature.properties.Propinsi.toUpperCase() === selectedProv.toUpperCase()) {
+      const geojsonName = layer.feature.properties.Propinsi.toUpperCase().trim();
+      const dropdownName = selectedProv.toUpperCase().trim();
+
+      if (geojsonName === dropdownName) {
         layer.setStyle({
-          fillColor: '#ffa000', // Highlight Oranye
+          fillColor: '#ffa000', 
           fillOpacity: 0.5,
           weight: 3,
           color: '#1b5e20'
         });
-        map.flyTo(layer.getBounds().getCenter(), 7); // Efek transisi smooth
+        // Pindahkan peta ke batas wilayah provinsi secara otomatis
+        map.flyToBounds(layer.getBounds(), { padding: [20, 20] });
       } else {
         geojsonLayer.resetStyle(layer);
       }
     });
   }
 
-  // FITUR 2: Logika Download Link
-  const provinceData = provinceMap[selectedProv];
-  if (level === "kabkota" && period === "monthly" && provinceData) {
-    const fileCode = provinceData.code;
+  // LOGIKA DOWNLOAD
+  const fileCode = provinceMap[selectedProv];
+  if (level === "kabkota" && period === "monthly" && fileCode) {
     const filename = `NTL_KabKota_${fileCode}_Monthly.csv`;
     link.href = `data/kabkota/nighttime_lights/monthly/${filename}`;
     link.classList.remove("disabled");
@@ -267,10 +277,6 @@ provinceSelect.addEventListener("change", updateDownload);
 document.getElementById("levelSelect").addEventListener("change", updateDownload);
 document.getElementById("periodSelect").addEventListener("change", updateDownload);
 
-// Inisialisasi awal (delay sedikit agar GeoJSON ter-load dulu)
-setTimeout(updateDownload, 800);
-
 </script>
-
 </body>
 </html>
