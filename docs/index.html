@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <title>GLS Green Database</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
   <style>
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Arial, sans-serif;
       background-color: #f4f8f4;
       color: #2e3d2f;
     }
@@ -25,40 +28,24 @@
       font-size: 36px;
     }
 
-    header p {
-      margin-top: 10px;
-      font-size: 16px;
-      opacity: 0.9;
-    }
-
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 40px auto;
       padding: 0 20px;
     }
 
-    .dataset-card {
+    .card {
       background: white;
       border-radius: 12px;
       padding: 25px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      margin-bottom: 25px;
-      transition: 0.3s;
+      margin-bottom: 30px;
     }
 
-    .dataset-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-    }
-
-    .dataset-card h2 {
-      margin-top: 0;
-      color: #1b5e20;
-    }
-
-    .dataset-meta {
+    select {
+      padding: 8px;
       font-size: 14px;
-      color: #666;
+      margin-top: 10px;
       margin-bottom: 15px;
     }
 
@@ -77,57 +64,92 @@
       background-color: #1b5e20;
     }
 
-    footer {
-      text-align: center;
-      padding: 30px 10px;
-      background-color: #e8f5e9;
-      font-size: 14px;
-      color: #555;
-      margin-top: 50px;
+    #map {
+      height: 400px;
+      border-radius: 10px;
+      margin-top: 20px;
     }
 
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 26px;
-      }
+    footer {
+      text-align: center;
+      padding: 25px;
+      background-color: #e8f5e9;
+      margin-top: 40px;
     }
   </style>
 </head>
 
 <body>
 
-  <header>
-    <h1>GLS Green Database</h1>
-    <p>Green Living Support Environmental Data Repository</p>
-  </header>
+<header>
+  <h1>GLS Green Database</h1>
+  <p>Green Living Support Environmental Data Repository</p>
+</header>
 
-  <div class="container">
+<div class="container">
 
-    <div class="dataset-card">
-      <h2>Nighttime Lights – Kab/Kota Jawa Timur (Monthly)</h2>
-      <div class="dataset-meta">
-        Source: VIIRS DNB • Level: Kabupaten/Kota • Period: 2012–Latest • Format: CSV
-      </div>
+  <div class="card">
+    <h2>Nighttime Lights Dataset</h2>
 
-      <p>
-        Dataset intensitas cahaya malam (Nighttime Lights) hasil ekstraksi
-        Google Earth Engine pada level kabupaten/kota di Jawa Timur.
-        Digunakan sebagai proxy aktivitas ekonomi dan urbanisasi.
-      </p>
+    <label>Pilih Provinsi:</label><br>
+    <select id="provinceSelect">
+      <option value="jatim">Jawa Timur</option>
+      <option value="jambi">Jambi</option>
+    </select>
 
-      <a href="data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jatim_Monthly.csv"
-         class="download-btn"
-         download
-         type="text/csv">
-         ⬇ Download Dataset
-      </a>
-    </div>
+    <br>
 
+    <a id="downloadLink"
+       class="download-btn"
+       href="data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jatim_Monthly.csv"
+       download>
+       ⬇ Download Dataset
+    </a>
+
+    <div id="map"></div>
   </div>
 
-  <footer>
-    © 2026 Green Living Support (GLS) • Environmental Data Initiative
-  </footer>
+</div>
+
+<footer>
+  © 2026 Green Living Support (GLS)
+</footer>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+  var map = L.map('map').setView([-2.5, 118], 5);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  var provinces = {
+    jatim: {
+      coords: [-7.5, 112.5],
+      zoom: 8,
+      file: "data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jatim_Monthly.csv"
+    },
+    jambi: {
+      coords: [-1.6, 103.6],
+      zoom: 8,
+      file: "data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jambi_Monthly.csv"
+    }
+  };
+
+  var marker = L.marker([-7.5, 112.5]).addTo(map);
+
+  document.getElementById("provinceSelect").addEventListener("change", function() {
+    var selected = this.value;
+    var data = provinces[selected];
+
+    map.setView(data.coords, data.zoom);
+    marker.setLatLng(data.coords);
+
+    document.getElementById("downloadLink").href = data.file;
+  });
+</script>
 
 </body>
 </html>
