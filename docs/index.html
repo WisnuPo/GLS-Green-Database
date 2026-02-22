@@ -1,154 +1,211 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>GLS Green Database</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>GLS Green Database</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f8f4;
-      color: #2e3d2f;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f8f4;
+  color: #2e3d2f;
+}
 
-    header {
-      background: linear-gradient(135deg, #1b5e20, #2e7d32);
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
-    }
+header {
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 36px;
-    }
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
 
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 25px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      margin-bottom: 30px;
-    }
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
 
-    select {
-      padding: 8px;
-      font-size: 14px;
-      margin-top: 10px;
-      margin-bottom: 15px;
-    }
+select {
+  padding: 8px;
+  font-size: 14px;
+}
 
-    .download-btn {
-      display: inline-block;
-      padding: 10px 18px;
-      background-color: #2e7d32;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
-      transition: 0.3s;
-    }
+.download-btn {
+  display: inline-block;
+  padding: 10px 18px;
+  background-color: #2e7d32;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+  margin-top: 10px;
+}
 
-    .download-btn:hover {
-      background-color: #1b5e20;
-    }
+.download-btn.disabled {
+  background-color: grey;
+  pointer-events: none;
+}
 
-    #map {
-      height: 400px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
+.notice {
+  margin-top: 10px;
+  font-weight: bold;
+  color: red;
+}
 
-    footer {
-      text-align: center;
-      padding: 25px;
-      background-color: #e8f5e9;
-      margin-top: 40px;
-    }
-  </style>
+#map {
+  height: 400px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  background-color: #e8f5e9;
+  margin-top: 40px;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>GLS Green Database</h1>
-  <p>Green Living Support Environmental Data Repository</p>
+<h1>GLS Green Database</h1>
+<p>Green Living Support Environmental Data Repository</p>
 </header>
 
 <div class="container">
+<div class="card">
 
-  <div class="card">
-    <h2>Nighttime Lights Dataset</h2>
+<h2>Nighttime Lights Dataset</h2>
 
-    <label>Pilih Provinsi:</label><br>
-    <select id="provinceSelect">
-      <option value="jatim">Jawa Timur</option>
-      <option value="jambi">Jambi</option>
-    </select>
+<div class="filters">
 
-    <br>
+<div>
+<label>Pilih Provinsi:</label><br>
+<select id="provinceSelect"></select>
+</div>
 
-    <a id="downloadLink"
-       class="download-btn"
-       href="data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jatim_Monthly.csv"
-       download>
-       ⬇ Download Dataset
-    </a>
+<div>
+<label>Level:</label><br>
+<select id="levelSelect">
+<option value="kabkota">Kabupaten/Kota</option>
+<option value="desa">Desa</option>
+</select>
+</div>
 
-    <div id="map"></div>
-  </div>
+<div>
+<label>Periode:</label><br>
+<select id="periodSelect">
+<option value="monthly">Monthly</option>
+<option value="quarterly">Quarterly</option>
+<option value="yearly">Yearly</option>
+</select>
+</div>
 
 </div>
 
+<a id="downloadLink"
+   class="download-btn"
+   download>
+⬇ Download Dataset
+</a>
+
+<div class="notice" id="notice"></div>
+
+<div id="map"></div>
+
+</div>
+</div>
+
 <footer>
-  © 2026 Green Living Support (GLS)
+© 2026 Green Living Support (GLS)
 </footer>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-  var map = L.map('map').setView([-2.5, 118], 5);
+// 38 PROVINSI
+const provinces = [
+"Aceh","Sumatera Utara","Sumatera Barat","Riau","Kepulauan Riau",
+"Jambi","Sumatera Selatan","Bangka Belitung","Bengkulu","Lampung",
+"DKI Jakarta","Jawa Barat","Jawa Tengah","DI Yogyakarta","Jawa Timur",
+"Banten","Bali","Nusa Tenggara Barat","Nusa Tenggara Timur",
+"Kalimantan Barat","Kalimantan Tengah","Kalimantan Selatan","Kalimantan Timur","Kalimantan Utara",
+"Sulawesi Utara","Gorontalo","Sulawesi Tengah","Sulawesi Barat",
+"Sulawesi Selatan","Sulawesi Tenggara",
+"Maluku","Maluku Utara","Papua","Papua Barat",
+"Papua Selatan","Papua Tengah","Papua Pegunungan","Papua Barat Daya"
+];
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-  }).addTo(map);
+// Isi dropdown provinsi
+const provinceSelect = document.getElementById("provinceSelect");
+provinces.forEach(p => {
+  const option = document.createElement("option");
+  option.value = p.toLowerCase().replace(/\s+/g,'_');
+  option.textContent = p;
+  provinceSelect.appendChild(option);
+});
 
-  var provinces = {
-    jatim: {
-      coords: [-7.5, 112.5],
-      zoom: 8,
-      file: "data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jatim_Monthly.csv"
-    },
-    jambi: {
-      coords: [-1.6, 103.6],
-      zoom: 8,
-      file: "data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jambi_Monthly.csv"
-    }
-  };
+// Leaflet Map
+var map = L.map('map').setView([-2.5,118],5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  attribution:'© OpenStreetMap'
+}).addTo(map);
 
-  var marker = L.marker([-7.5, 112.5]).addTo(map);
+var marker = L.marker([-7.5,112.5]).addTo(map);
 
-  document.getElementById("provinceSelect").addEventListener("change", function() {
-    var selected = this.value;
-    var data = provinces[selected];
+// Data tersedia hanya:
+const available = {
+  level: "kabkota",
+  period: "monthly"
+};
 
-    map.setView(data.coords, data.zoom);
-    marker.setLatLng(data.coords);
+function updateDownload() {
+  const province = provinceSelect.value;
+  const level = document.getElementById("levelSelect").value;
+  const period = document.getElementById("periodSelect").value;
 
-    document.getElementById("downloadLink").href = data.file;
-  });
+  const link = document.getElementById("downloadLink");
+  const notice = document.getElementById("notice");
+
+  if (level === available.level && period === available.period) {
+
+    link.href = `data/${level}/nighttime_lights/${period}/NTL_${province}_${period}.csv`;
+    link.classList.remove("disabled");
+    notice.textContent = "";
+
+  } else {
+
+    link.removeAttribute("href");
+    link.classList.add("disabled");
+    notice.textContent = "Data Belum Tersedia untuk kombinasi ini.";
+
+  }
+}
+
+provinceSelect.addEventListener("change", updateDownload);
+document.getElementById("levelSelect").addEventListener("change", updateDownload);
+document.getElementById("periodSelect").addEventListener("change", updateDownload);
+
+updateDownload();
 </script>
 
 </body>
