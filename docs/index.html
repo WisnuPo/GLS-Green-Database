@@ -4,279 +4,132 @@
 <meta charset="UTF-8">
 <title>GLS Green Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css""")/>>
-
+<link rel="stylesheet" href="https://unpkg.com""")/>>
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f8f4;
-  color: #2e3d2f;
-}
-
-header {
-  background: linear-gradient(135deg, #1b5e20, #2e7d32);
-  color: white;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-select {
-  padding: 8px;
-  font-size: 14px;
-}
-
-.download-btn {
-  display: inline-block;
-  padding: 10px 18px;
-  background-color: #2e7d32;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: bold;
-  margin-top: 10px;
-}
-
-.download-btn.disabled {
-  background-color: grey;
-  pointer-events: none;
-}
-
-.notice {
-  margin-top: 10px;
-  font-weight: bold;
-  color: red;
-}
-
-#map {
-  height: 500px;
-  border-radius: 10px;
-  margin-top: 20px;
-  border: 2px solid #ddd;
-}
-
-footer {
-  text-align: center;
-  padding: 25px;
-  background-color: #e8f5e9;
-  margin-top: 40px;
-}
+body { margin: 0; font-family: Arial, sans-serif; background-color: #f4f8f4; color: #2e3d2f; }
+header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 40px 20px; text-align: center; }
+.container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+.card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.filters { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+select { padding: 8px; font-size: 14px; }
+.download-btn { display: inline-block; padding: 10px 18px; background-color: #2e7d32; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 10px; }
+.download-btn.disabled { background-color: grey; pointer-events: none; }
+.notice { margin-top: 10px; font-weight: bold; color: red; }
+#map { height: 500px; border-radius: 10px; margin-top: 20px; border: 2px solid #ddd; }
+footer { text-align: center; padding: 25px; background-color: #e8f5e9; margin-top: 40px; }
 </style>
 </head>
-
 <body>
 
 <header>
-<h1>GLS Green Database</h1>
-<p>Green Living Support Environmental Data Repository</p>
+    <h1>GLS Green Database</h1>
+    <p>Green Living Support Environmental Data Repository</p>
 </header>
 
 <div class="container">
-<div class="card">
-
-<h2>Nighttime Lights Dataset</h2>
-
-<div class="filters">
-
-<div>
-<label>Pilih Provinsi:</label><br>
-<select id="provinceSelect"></select>
+    <div class="card">
+        <h2>Nighttime Lights Dataset</h2>
+        <div class="filters">
+            <div><label>Pilih Provinsi:</label><br><select id="provinceSelect"></select></div>
+            <div><label>Level:</label><br><select id="levelSelect"><option value="kabkota">Kabupaten/Kota</option><option value="desa">Desa</option></select></div>
+            <div><label>Periode:</label><br><select id="periodSelect"><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select></div>
+        </div>
+        <a id="downloadLink" class="download-btn" download>⬇ Download Dataset</a>
+        <div id="notice" class="notice"></div>
+        <div id="map"></div>
+    </div>
 </div>
 
-<div>
-<label>Level:</label><br>
-<select id="levelSelect">
-<option value="kabkota">Kabupaten/Kota</option>
-<option value="desa">Desa</option>
-</select>
-</div>
+<footer>© 2026 Green Living Support (GLS)</footer>
 
-<div>
-<label>Periode:</label><br>
-<select id="periodSelect">
-<option value="monthly">Monthly</option>
-<option value="quarterly">Quarterly</option>
-<option value="yearly">Yearly</option>
-</select>
-</div>
-
-</div>
-
-<a id="downloadLink" class="download-btn" download>
-⬇ Download Dataset
-</a>
-
-<div class="notice" id="notice"></div>
-
-<div id="map"></div>
-
-</div>
-</div>
-
-<footer>
-© 2026 Green Living Support (GLS)
-</footer>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
+<script src="https://unpkg.com"></script>
 <script>
-// Data Mapping Provinsi
 const provinceMap = {
-  "Aceh": "Aceh",
-  "Sumatera Utara": "Sumut",
-  "Sumatera Barat": "Sumbar",
-  "Riau": "Riau",
-  "Kepulauan Riau": "Kepri",
-  "Jambi": "Jambi",
-  "Sumatera Selatan": "Sumsel",
-  "Bangka Belitung": "KepBabel",
-  "Bengkulu": "Bengkulu",
-  "Lampung": "Lampung",
-  "DKI Jakarta": "DKI_Jakarta",
-  "Jawa Barat": "Jabar",
-  "Jawa Tengah": "Jateng",
-  "DI Yogyakarta": "DIY",
-  "Jawa Timur": "Jatim",
-  "Banten": "Banten",
-  "Bali": "Bali",
-  "Nusa Tenggara Barat": "NTB",
-  "Nusa Tenggara Timur": "NTT",
-  "Kalimantan Barat": "Kalbar",
-  "Kalimantan Tengah": "Kalteng",
-  "Kalimantan Selatan": "Kalsel",
-  "Kalimantan Timur": "Kaltim",
-  "Kalimantan Utara": "Kalut",
-  "Sulawesi Utara": "Sulut",
-  "Gorontalo": "Gorontalo",
-  "Sulawesi Tengah": "Sulteng",
-  "Sulawesi Barat": "Sulbar",
-  "Sulawesi Selatan": "Sulsel",
-  "Sulawesi Tenggara": "Sultra",
-  "Maluku": "Maluku",
-  "Maluku Utara": "Malut",
-  "Papua": "Papua",
-  "Papua Barat": "PB",
-  "Papua Selatan": "PS",
-  "Papua Tengah": "PT",
-  "Papua Pegunungan": "PP",
-  "Papua Barat Daya": "PBD"
+    "Aceh": "Aceh", "Sumatera Utara": "Sumut", "Sumatera Barat": "Sumbar", "Riau": "Riau", "Kepulauan Riau": "Kepri",
+    "Jambi": "Jambi", "Sumatera Selatan": "Sumsel", "Bangka Belitung": "KepBabel", "Bengkulu": "Bengkulu", "Lampung": "Lampung",
+    "DKI Jakarta": "DKI_Jakarta", "Jawa Barat": "Jabar", "Jawa Tengah": "Jateng", "DI Yogyakarta": "DIY", "Jawa Timur": "Jatim",
+    "Banten": "Banten", "Bali": "Bali", "Nusa Tenggara Barat": "NTB", "Nusa Tenggara Timur": "NTT", "Kalimantan Barat": "Kalbar",
+    "Kalimantan Tengah": "Kalteng", "Kalimantan Selatan": "Kalsel", "Kalimantan Timur": "Kaltim", "Kalimantan Utara": "Kalut",
+    "Sulawesi Utara": "Sulut", "Gorontalo": "Gorontalo", "Sulawesi Tengah": "Sulteng", "Sulawesi Barat": "Sulbar", "Sulawesi Selatan": "Sulsel",
+    "Sulawesi Tenggara": "Sultra", "Maluku": "Maluku", "Maluku Utara": "Malut", "Papua": "Papua", "Papua Barat": "PB",
+    "Papua Selatan": "PS", "Papua Tengah": "PT", "Papua Pegunungan": "PP", "Papua Barat Daya": "PBD"
 };
 
 const provinceSelect = document.getElementById("provinceSelect");
 let geojsonLayer;
 
-// Isi dropdown
 Object.keys(provinceMap).forEach(p => {
-  const option = document.createElement("option");
-  option.value = p;
-  option.textContent = p;
-  provinceSelect.appendChild(option);
+    const option = document.createElement("option");
+    option.value = p; option.textContent = p;
+    provinceSelect.appendChild(option);
 });
 
-// Inisialisasi Map
 var map = L.map('map').setView([-2.5, 118], 5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
-}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
-// Load GeoJSON (URL Diperbaiki)
+// Memuat GeoJSON dengan styling default
 fetch('https://raw.githubusercontent.com')
-  .then(response => response.json())
-  .then(data => {
-    geojsonLayer = L.geoJson(data, {
-      style: {
-        fillColor: '#2e7d32',
-        weight: 1,
-        opacity: 1,
-        color: 'white',
-        fillOpacity: 0.1
-      },
-      onEachFeature: function(feature, layer) {
-        layer.on('click', function() {
-          // Cari nama yang paling mirip di dropdown (menghindari error case-sensitive)
-          const clickedName = feature.properties.Propinsi.toUpperCase().trim();
-          for (let option of provinceSelect.options) {
-            if (option.value.toUpperCase().trim() === clickedName) {
-              provinceSelect.value = option.value;
-              break;
+    .then(res => res.json())
+    .then(data => {
+        geojsonLayer = L.geoJson(data, {
+            style: { color: "#ffffff", weight: 1, opacity: 1, fillColor: "#2e7d32", fillOpacity: 0.1 },
+            onEachFeature: function(feature, layer) {
+                layer.on('click', function() {
+                    const name = feature.properties.Propinsi.toUpperCase().trim();
+                    for (let opt of provinceSelect.options) {
+                        if (opt.value.toUpperCase().trim() === name) {
+                            provinceSelect.value = opt.value;
+                            break;
+                        }
+                    }
+                    updateDownload();
+                });
             }
-          }
-          updateDownload();
-        });
-      }
-    }).addTo(map);
-    // Jalankan update setelah data siap
-    updateDownload();
-  });
+        }).addTo(map);
+        updateDownload();
+    });
 
 function updateDownload() {
-  const selectedProv = provinceSelect.value;
-  const level = document.getElementById("levelSelect").value;
-  const period = document.getElementById("periodSelect").value;
-  const link = document.getElementById("downloadLink");
-  const notice = document.getElementById("notice");
+    const selected = provinceSelect.value;
+    const level = document.getElementById("levelSelect").value;
+    const period = document.getElementById("periodSelect").value;
+    const link = document.getElementById("downloadLink");
+    const notice = document.getElementById("notice");
 
-  // FITUR HIGHLIGHT
-  if (geojsonLayer) {
-    geojsonLayer.eachLayer(function(layer) {
-      const geojsonName = layer.feature.properties.Propinsi.toUpperCase().trim();
-      const dropdownName = selectedProv.toUpperCase().trim();
+    if (geojsonLayer) {
+        geojsonLayer.eachLayer(function(layer) {
+            const geoName = layer.feature.properties.Propinsi.toUpperCase().trim();
+            const selName = selected.toUpperCase().trim();
 
-      if (geojsonName === dropdownName) {
-        layer.setStyle({
-          fillColor: '#ffa000', 
-          fillOpacity: 0.5,
-          weight: 3,
-          color: '#1b5e20'
+            if (geoName === selName) {
+                // Beri warna border kontras dan naikkan ke lapisan paling depan
+                layer.setStyle({
+                    color: '#1b5e20', weight: 4, opacity: 1, 
+                    fillColor: '#ffa000', fillOpacity: 0.5 
+                });
+                layer.bringToFront(); 
+                map.flyToBounds(layer.getBounds(), { padding: [20, 20] });
+            } else {
+                geojsonLayer.resetStyle(layer);
+            }
         });
-        // Pindahkan peta ke batas wilayah provinsi secara otomatis
-        map.flyToBounds(layer.getBounds(), { padding: [20, 20] });
-      } else {
-        geojsonLayer.resetStyle(layer);
-      }
-    });
-  }
+    }
 
-  // LOGIKA DOWNLOAD
-  const fileCode = provinceMap[selectedProv];
-  if (level === "kabkota" && period === "monthly" && fileCode) {
-    const filename = `NTL_KabKota_${fileCode}_Monthly.csv`;
-    link.href = `data/kabkota/nighttime_lights/monthly/${filename}`;
-    link.classList.remove("disabled");
-    notice.textContent = "";
-  } else {
-    link.removeAttribute("href");
-    link.classList.add("disabled");
-    notice.textContent = "Data Belum Tersedia untuk kombinasi ini.";
-  }
+    const code = provinceMap[selected];
+    if (level === "kabkota" && period === "monthly" && code) {
+        link.href = `data/kabkota/nighttime_lights/monthly/NTL_KabKota_${code}_Monthly.csv`;
+        link.classList.remove("disabled");
+        notice.textContent = "";
+    } else {
+        link.removeAttribute("href");
+        link.classList.add("disabled");
+        notice.textContent = "Data Belum Tersedia untuk kombinasi ini.";
+    }
 }
 
-// Event Listeners
 provinceSelect.addEventListener("change", updateDownload);
 document.getElementById("levelSelect").addEventListener("change", updateDownload);
 document.getElementById("periodSelect").addEventListener("change", updateDownload);
-
 </script>
 </body>
 </html>
