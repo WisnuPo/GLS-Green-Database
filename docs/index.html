@@ -70,10 +70,9 @@ select {
 }
 
 #map {
-  height: 500px;
+  height: 400px;
   border-radius: 10px;
   margin-top: 20px;
-  border: 2px solid #ddd;
 }
 
 footer {
@@ -123,7 +122,9 @@ footer {
 
 </div>
 
-<a id="downloadLink" class="download-btn" download>
+<a id="downloadLink"
+   class="download-btn"
+   download>
 ⬇ Download Dataset
 </a>
 
@@ -138,47 +139,51 @@ footer {
 © 2026 Green Living Support (GLS)
 </footer>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script>
-// 1. Tambahkan koordinat [lat, lng] untuk setiap provinsi agar peta tahu ke mana harus bergerak
+// 38 PROVINSI
+
+// Mapping nama provinsi → kode file
 const provinceMap = {
-  "Aceh": { code: "Aceh", coords: [4.6951, 96.7494] },
-  "Sumatera Utara": { code: "Sumut", coords: [2.1121, 99.1777] },
-  "Sumatera Barat": { code: "Sumbar", coords: [-0.7399, 100.8000] },
-  "Riau": { code: "Riau", coords: [0.5071, 101.4478] },
-  "Kepulauan Riau": { code: "Kepri", coords: [3.9456, 108.1429] },
-  "Jambi": { code: "Jambi", coords: [-1.6186, 103.6131] },
-  "Sumatera Selatan": { code: "Sumsel", coords: [-3.3194, 104.9145] },
-  "Bangka Belitung": { code: "KepBabel", coords: [-2.7411, 106.4406] },
-  "Bengkulu": { code: "Bengkulu", coords: [-3.7928, 102.2608] },
-  "Lampung": { code: "Lampung", coords: [-4.5586, 105.4068] },
-  "DKI Jakarta": { code: "DKI_Jakarta", coords: [-6.2088, 106.8456] },
-  "Jawa Barat": { code: "Jabar", coords: [-7.0909, 107.6689] },
-  "Jawa Tengah": { code: "Jateng", coords: [-7.1510, 110.1403] },
-  "DI Yogyakarta": { code: "DIY", coords: [-7.8754, 110.4262] },
-  "Jawa Timur": { code: "Jatim", coords: [-7.5361, 112.2384] },
-  "Banten": { code: "Banten", coords: [-6.4058, 106.0640] },
-  "Bali": { code: "Bali", coords: [-8.4095, 115.1889] },
-  "Nusa Tenggara Barat": { code: "NTB", coords: [-8.6529, 117.3616] },
-  "Nusa Tenggara Timur": { code: "NTT", coords: [-8.6574, 121.0794] },
-  "Kalimantan Barat": { code: "Kalbar", coords: [-0.2788, 109.9754] },
-  "Kalimantan Tengah": { code: "Kalteng", coords: [-1.6815, 113.3824] },
-  "Kalimantan Selatan": { code: "Kalsel", coords: [-3.0926, 115.2838] },
-  "Kalimantan Timur": { code: "Kaltim", coords: [0.5387, 116.4194] },
-  "Kalimantan Utara": { code: "Kalut", coords: [3.0731, 116.0414] },
-  "Sulawesi Utara": { code: "Sulut", coords: [0.6247, 123.9750] },
-  "Gorontalo": { code: "Gorontalo", coords: [0.6999, 122.4467] },
-  "Sulawesi Tengah": { code: "Sulteng", coords: [-1.4300, 121.4456] },
-  "Sulawesi Barat": { code: "Sulbar", coords: [-2.8440, 119.2321] },
-  "Sulawesi Selatan": { code: "Sulsel", coords: [-3.6688, 119.9741] },
-  "Sulawesi Tenggara": { code: "Sultra", coords: [-4.1449, 122.1746] },
-  "Maluku": { code: "Maluku", coords: [-3.2385, 130.1453] },
-  "Maluku Utara": { code: "Malut", coords: [1.5709, 127.8088] },
-  "Papua": { code: "Papua", coords: [-2.3048, 140.0163] },
-  "Papua Barat": { code: "PB", coords: [-1.3361, 133.1747] },
-  "Papua Selatan": { code: "PS", coords: [-7.5138, 139.0225] },
-  "Papua Tengah": { code: "PT", coords: [-3.9174, 135.9404] },
-  "Papua Pegunungan": { code: "PP", coords: [-4.0537, 139.1171] },
-  "Papua Barat Daya": { code: "PBD", coords: [-1.0503, 132.0628] }
+  "Aceh": "Aceh",
+  "Sumatera Utara": "Sumut",
+  "Sumatera Barat": "Sumbar",
+  "Riau": "Riau",
+  "Kepulauan Riau": "Kepri",
+  "Jambi": "Jambi",
+  "Sumatera Selatan": "Sumsel",
+  "Bangka Belitung": "KepBabel",
+  "Bengkulu": "Bengkulu",
+  "Lampung": "Lampung",
+  "DKI Jakarta": "DKI_Jakarta",
+  "Jawa Barat": "Jabar",
+  "Jawa Tengah": "Jateng",
+  "DI Yogyakarta": "DIY",
+  "Jawa Timur": "Jatim",
+  "Banten": "Banten",
+  "Bali": "Bali",
+  "Nusa Tenggara Barat": "NTB",
+  "Nusa Tenggara Timur": "NTT",
+  "Kalimantan Barat": "Kalbar",
+  "Kalimantan Tengah": "Kalteng",
+  "Kalimantan Selatan": "Kalsel",
+  "Kalimantan Timur": "Kaltim",
+  "Kalimantan Utara": "Kalut",
+  "Sulawesi Utara": "Sulut",
+  "Gorontalo": "Gorontalo",
+  "Sulawesi Tengah": "Sulteng",
+  "Sulawesi Barat": "Sulbar",
+  "Sulawesi Selatan": "Sulsel",
+  "Sulawesi Tenggara": "Sultra",
+  "Maluku": "Maluku",
+  "Maluku Utara": "Malut",
+  "Papua": "Papua",
+  "Papua Barat": "PB",
+  "Papua Selatan": "PS",
+  "Papua Tengah": "PT",
+  "Papua Pegunungan": "PP",
+  "Papua Barat Daya": "PBD"
 };
 
 const provinceSelect = document.getElementById("provinceSelect");
@@ -191,52 +196,45 @@ Object.keys(provinceMap).forEach(p => {
   provinceSelect.appendChild(option);
 });
 
-// Inisialisasi Map
-var map = L.map('map').setView([-2.5, 118], 5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
+// Leaflet Map
+var map = L.map('map').setView([-2.5,118],5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  attribution:'© OpenStreetMap'
 }).addTo(map);
 
-// Inisialisasi Marker (kosong dulu)
-var marker = L.marker([-2.5, 118]).addTo(map);
+var marker = L.marker([-7.5,112.5]).addTo(map);
 
 function updateDownload() {
-  const provinceName = provinceSelect.value;
+
+  const province = provinceSelect.value;
   const level = document.getElementById("levelSelect").value;
   const period = document.getElementById("periodSelect").value;
-  
+
   const link = document.getElementById("downloadLink");
   const notice = document.getElementById("notice");
-  
-  // FITUR UPDATE PETA: Pindahkan view dan pindahkan marker
-  const provinceData = provinceMap[provinceName];
-  if (provinceData) {
-    map.setView(provinceData.coords, 7); // Zoom ke level 7
-    marker.setLatLng(provinceData.coords); // Pindahkan marker ke provinsi
-    marker.bindPopup(`<b>${provinceName}</b>`).openPopup();
-  }
 
-  // Logika Download
   if (level === "kabkota" && period === "monthly") {
-    const fileCode = provinceData.code;
+
+    const fileCode = provinceMap[province];
     const filename = `NTL_KabKota_${fileCode}_Monthly.csv`;
 
     link.href = `data/kabkota/nighttime_lights/monthly/${filename}`;
     link.classList.remove("disabled");
     notice.textContent = "";
+
   } else {
+
     link.removeAttribute("href");
     link.classList.add("disabled");
     notice.textContent = "Data Belum Tersedia untuk kombinasi ini.";
+
   }
 }
 
-// Event Listeners
 provinceSelect.addEventListener("change", updateDownload);
 document.getElementById("levelSelect").addEventListener("change", updateDownload);
 document.getElementById("periodSelect").addEventListener("change", updateDownload);
 
-// Run saat pertama kali load
 updateDownload();
 
 </script>
