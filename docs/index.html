@@ -143,23 +143,55 @@ footer {
 
 <script>
 // 38 PROVINSI
-const provinces = [
-"Aceh","Sumatera Utara","Sumatera Barat","Riau","Kepulauan Riau",
-"Jambi","Sumatera Selatan","Bangka Belitung","Bengkulu","Lampung",
-"DKI Jakarta","Jawa Barat","Jawa Tengah","DI Yogyakarta","Jawa Timur",
-"Banten","Bali","Nusa Tenggara Barat","Nusa Tenggara Timur",
-"Kalimantan Barat","Kalimantan Tengah","Kalimantan Selatan","Kalimantan Timur","Kalimantan Utara",
-"Sulawesi Utara","Gorontalo","Sulawesi Tengah","Sulawesi Barat",
-"Sulawesi Selatan","Sulawesi Tenggara",
-"Maluku","Maluku Utara","Papua","Papua Barat",
-"Papua Selatan","Papua Tengah","Papua Pegunungan","Papua Barat Daya"
-];
 
-// Isi dropdown provinsi
+// Mapping nama provinsi → kode file
+const provinceMap = {
+  "Aceh": "Aceh",
+  "Sumatera Utara": "Sumut",
+  "Sumatera Barat": "Sumbar",
+  "Riau": "Riau",
+  "Kepulauan Riau": "Kepri",
+  "Jambi": "Jambi",
+  "Sumatera Selatan": "Sumsel",
+  "Bangka Belitung": "KepBabel",
+  "Bengkulu": "Bengkulu",
+  "Lampung": "Lampung",
+  "DKI Jakarta": "DKI_Jakarta",
+  "Jawa Barat": "Jabar",
+  "Jawa Tengah": "Jateng",
+  "DI Yogyakarta": "DIY",
+  "Jawa Timur": "Jatim",
+  "Banten": "Banten",
+  "Bali": "Bali",
+  "Nusa Tenggara Barat": "NTB",
+  "Nusa Tenggara Timur": "NTT",
+  "Kalimantan Barat": "Kalbar",
+  "Kalimantan Tengah": "Kalteng",
+  "Kalimantan Selatan": "Kalsel",
+  "Kalimantan Timur": "Kaltim",
+  "Kalimantan Utara": "Kalut",
+  "Sulawesi Utara": "Sulut",
+  "Gorontalo": "Gorontalo",
+  "Sulawesi Tengah": "Sulteng",
+  "Sulawesi Barat": "Sulbar",
+  "Sulawesi Selatan": "Sulsel",
+  "Sulawesi Tenggara": "Sultra",
+  "Maluku": "Maluku",
+  "Maluku Utara": "Malut",
+  "Papua": "Papua",
+  "Papua Barat": "PB",
+  "Papua Selatan": "PS",
+  "Papua Tengah": "PT",
+  "Papua Pegunungan": "PP",
+  "Papua Barat Daya": "PBD"
+};
+
 const provinceSelect = document.getElementById("provinceSelect");
-provinces.forEach(p => {
+
+// Isi dropdown
+Object.keys(provinceMap).forEach(p => {
   const option = document.createElement("option");
-  option.value = p.toLowerCase().replace(/\s+/g,'_');
+  option.value = p;
   option.textContent = p;
   provinceSelect.appendChild(option);
 });
@@ -172,13 +204,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 
 var marker = L.marker([-7.5,112.5]).addTo(map);
 
-// Data tersedia hanya:
-const available = {
-  level: "kabkota",
-  period: "monthly"
-};
-
 function updateDownload() {
+
   const province = provinceSelect.value;
   const level = document.getElementById("levelSelect").value;
   const period = document.getElementById("periodSelect").value;
@@ -186,9 +213,12 @@ function updateDownload() {
   const link = document.getElementById("downloadLink");
   const notice = document.getElementById("notice");
 
-  if (level === available.level && period === available.period) {
+  if (level === "kabkota" && period === "monthly") {
 
-    link.href = `data/${level}/nighttime_lights/${period}/NTL_${province}_${period}.csv`;
+    const fileCode = provinceMap[province];
+    const filename = `NTL_KabKota_${fileCode}_Monthly.csv`;
+
+    link.href = `data/kabkota/nighttime_lights/monthly/${filename}`;
     link.classList.remove("disabled");
     notice.textContent = "";
 
@@ -206,6 +236,7 @@ document.getElementById("levelSelect").addEventListener("change", updateDownload
 document.getElementById("periodSelect").addEventListener("change", updateDownload);
 
 updateDownload();
+
 </script>
 
 </body>
