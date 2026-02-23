@@ -4,151 +4,69 @@
 <meta charset="UTF-8">
 <title>GLS Green Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css""")/>>
-
+<link rel="stylesheet" href="https://unpkg.com""")/>>
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f8f4;
-  color: #2e3d2f;
-}
-
-header {
-  background: linear-gradient(135deg, #1b5e20, #2e7d32);
-  color: white;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-select {
-  padding: 8px;
-  font-size: 14px;
-}
-
-.download-btn {
-  display: inline-block;
-  padding: 10px 18px;
-  background-color: #2e7d32;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: bold;
-  margin-top: 10px;
-}
-
-.download-btn.disabled {
-  background-color: grey;
-  pointer-events: none;
-}
-
-.notice {
-  margin-top: 10px;
-  font-weight: bold;
-  color: red;
-}
-
-#map {
-  height: 500px;
-  border-radius: 10px;
-  margin-top: 20px;
-  border: 1px solid #ddd;
-}
-
-footer {
-  text-align: center;
-  padding: 25px;
-  background-color: #e8f5e9;
-  margin-top: 40px;
-}
+body { margin: 0; font-family: Arial, sans-serif; background-color: #f4f8f4; color: #2e3d2f; }
+header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 40px 20px; text-align: center; }
+.container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+.card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.filters { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+select { padding: 8px; font-size: 14px; }
+.download-btn { display: inline-block; padding: 10px 18px; background-color: #2e7d32; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 10px; }
+.download-btn.disabled { background-color: grey; pointer-events: none; }
+.notice { margin-top: 10px; font-weight: bold; color: red; }
+#map { height: 500px; border-radius: 10px; margin-top: 20px; border: 1px solid #ddd; }
+footer { text-align: center; padding: 25px; background-color: #e8f5e9; margin-top: 40px; }
 </style>
 </head>
-
 <body>
 
 <header>
-<h1>GLS Green Database</h1>
-<p>Green Living Support Environmental Data Repository</p>
+    <h1>GLS Green Database</h1>
+    <p>Green Living Support Environmental Data Repository</p>
 </header>
 
 <div class="container">
-<div class="card">
-
-<h2 id="datasetTitle">Environmental Dataset</h2>
-
-<div class="filters">
-
-<div>
-<label>Pilih Variabel:</label><br>
-<select id="variableSelect">
-  <option value="ntl">Nighttime Lights (NTL)</option>
-  <option value="metana">Metana (CH4)</option>
-</select>
+    <div class="card">
+        <h2 id="datasetTitle">Environmental Dataset</h2>
+        <div class="filters">
+            <div>
+                <label>Pilih Variabel:</label><br>
+                <select id="variableSelect">
+                  <option value="ntl">Nighttime Lights (NTL)</option>
+                  <option value="metana">Metana (CH4)</option>
+                </select>
+            </div>
+            <div>
+                <label>Pilih Provinsi:</label><br>
+                <select id="provinceSelect"></select>
+            </div>
+            <div>
+                <label>Level:</label><br>
+                <select id="levelSelect">
+                    <option value="kabkota">Kabupaten/Kota</option>
+                    <option value="desa">Desa</option>
+                </select>
+            </div>
+            <div>
+                <label>Periode:</label><br>
+                <select id="periodSelect">
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+        </div>
+        <a id="downloadLink" class="download-btn" download>⬇ Download Dataset</a>
+        <div id="notice" class="notice"></div>
+        <div id="map"></div>
+    </div>
 </div>
 
-<div>
-<label>Pilih Provinsi:</label><br>
-<select id="provinceSelect"></select>
-</div>
+<footer>© 2026 Green Living Support (GLS)</footer>
 
-<div>
-<label>Level:</label><br>
-<select id="levelSelect">
-<option value="kabkota">Kabupaten/Kota</option>
-<option value="desa">Desa</option>
-</select>
-</div>
-
-<div>
-<label>Periode:</label><br>
-<select id="periodSelect">
-<option value="monthly">Monthly</option>
-<option value="quarterly">Quarterly</option>
-<option value="yearly">Yearly</option>
-</select>
-</div>
-
-</div>
-
-<a id="downloadLink" class="download-btn" download>
-⬇ Download Dataset
-</a>
-
-<div class="notice" id="notice"></div>
-
-<div id="map"></div>
-
-</div>
-</div>
-
-<footer>
-© 2026 Green Living Support (GLS)
-</footer>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
+<script src="https://unpkg.com"></script>
 <script>
+// Data Koordinat & Kode Singkat
 const provinceMap = {
   "Aceh": { code: "Aceh", coords: [4.6951, 96.7494] },
   "Sumatera Utara": { code: "Sumut", coords: [2.1121, 99.1777] },
@@ -195,116 +113,89 @@ const variableSelect = document.getElementById("variableSelect");
 let geojsonLayer;
 
 Object.keys(provinceMap).forEach(p => {
-  const option = document.createElement("option");
-  option.value = p;
-  option.textContent = p;
-  provinceSelect.appendChild(option);
+    const option = document.createElement("option");
+    option.value = p; option.textContent = p;
+    provinceSelect.appendChild(option);
 });
 
 var map = L.map('map').setView([-2.5, 118], 5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
-}).addTo(map);
-
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 var marker = L.marker([-2.5, 118]).addTo(map);
 
-// Load GeoJSON Indonesia (URL Diperbaiki)
 fetch('https://raw.githubusercontent.com')
-  .then(response => response.json())
-  .then(data => {
-    geojsonLayer = L.geoJson(data, {
-      style: { color: "#ffffff", weight: 1, opacity: 1, fillColor: "#2e7d32", fillOpacity: 0.1 },
-      onEachFeature: function(feature, layer) {
-        layer.on('click', function() {
-          const clickedName = feature.properties.Propinsi.toUpperCase().trim();
-          for (let option of provinceSelect.options) {
-            if (option.value.toUpperCase().trim() === clickedName) {
-              provinceSelect.value = option.value;
-              break;
+    .then(res => res.json())
+    .then(data => {
+        geojsonLayer = L.geoJson(data, {
+            style: { color: "#ffffff", weight: 1, opacity: 1, fillColor: "#2e7d32", fillOpacity: 0.1 },
+            onEachFeature: function(feature, layer) {
+                layer.on('click', function() {
+                    const name = feature.properties.Propinsi.toUpperCase().trim();
+                    for (let opt of provinceSelect.options) {
+                        if (opt.value.toUpperCase().trim() === name) {
+                            provinceSelect.value = opt.value;
+                            break;
+                        }
+                    }
+                    updateDownload();
+                });
             }
-          }
-          updateDownload();
-        });
-      }
-    }).addTo(map);
-    updateDownload();
-  });
+        }).addTo(map);
+        updateDownload();
+    });
 
 function updateDownload() {
-  const variable = variableSelect.value;
-  const provinceName = provinceSelect.value;
-  const level = document.getElementById("levelSelect").value;
-  const period = document.getElementById("periodSelect").value;
-  
-  const link = document.getElementById("downloadLink");
-  const notice = document.getElementById("notice");
-  const title = document.getElementById("datasetTitle");
-  
-  const provinceData = provinceMap[provinceName];
+    const variable = variableSelect.value;
+    const provinceName = provinceSelect.value;
+    const level = document.getElementById("levelSelect").value;
+    const period = document.getElementById("periodSelect").value;
+    const link = document.getElementById("downloadLink");
+    const notice = document.getElementById("notice");
+    const provinceData = provinceMap[provinceName];
 
-  // 1. UPDATE PETA
-  if (provinceData) {
-    marker.setLatLng(provinceData.coords);
-    marker.bindPopup(`<b>${provinceName}</b>`).openPopup();
-
-    if (geojsonLayer) {
-      geojsonLayer.eachLayer(function(layer) {
-        const geoName = layer.feature.properties.Propinsi.toUpperCase().trim();
-        const selName = provinceName.toUpperCase().trim();
-
-        if (geoName === selName) {
-          const highlightColor = (variable === "ntl") ? "#ffa000" : "#00bcd4";
-          layer.setStyle({
-            color: '#1b5e20', weight: 4, opacity: 1, 
-            fillColor: highlightColor, fillOpacity: 0.5 
-          });
-          layer.bringToFront();
-          map.flyToBounds(layer.getBounds(), { padding: [50, 50] });
-        } else {
-          geojsonLayer.resetStyle(layer);
+    if (provinceData) {
+        marker.setLatLng(provinceData.coords);
+        if (geojsonLayer) {
+            geojsonLayer.eachLayer(function(layer) {
+                if (layer.feature.properties.Propinsi.toUpperCase().trim() === provinceName.toUpperCase().trim()) {
+                    layer.setStyle({ color: '#1b5e20', weight: 4, opacity: 1, fillColor: (variable === "ntl" ? "#ffa000" : "#00bcd4"), fillOpacity: 0.5 });
+                    layer.bringToFront();
+                    map.flyToBounds(layer.getBounds(), { padding: [50, 50] });
+                } else { geojsonLayer.resetStyle(layer); }
+            });
         }
-      });
     }
-  }
 
-  // 2. LOGIKA DOWNLOAD PATH & NAMA FILE
-  let isAvailable = false;
-  let finalPath = "";
+    let isAvailable = false;
+    let finalPath = "";
 
-  if (variable === "ntl") {
-    title.textContent = "Nighttime Lights Dataset";
-    if (level === "kabkota" && period === "monthly") {
-      const fileCode = provinceData.code;
-      finalPath = `data/kabkota/nighttime_lights/monthly/NTL_KabKota_${fileCode}_Monthly.csv`;
-      isAvailable = true;
+    if (variable === "ntl") {
+        document.getElementById("datasetTitle").textContent = "Nighttime Lights Dataset";
+        if (level === "kabkota" && period === "monthly") {
+            finalPath = `data/kabkota/nighttime_lights/monthly/NTL_KabKota_${provinceData.code}_Monthly.csv`;
+            isAvailable = true;
+        }
+    } else if (variable === "metana") {
+        document.getElementById("datasetTitle").textContent = "Methane (CH4) Dataset";
+        if (level === "kabkota" && period === "yearly") {
+            // PATH DISESUAIKAN DENGAN GAMBAR ANDA: docs/data/kabkota/ch4_metana/yearly/
+            // NAMA FILE DISESUAIKAN: CH4_KabKota_Aceh_Yearly_S5P.csv
+            finalPath = `docs/data/kabkota/ch4_metana/yearly/CH4_KabKota_${provinceName}_Yearly_S5P.csv`;
+            isAvailable = true;
+        }
     }
-  } else if (variable === "metana") {
-    title.textContent = "Methane (CH4) Dataset";
-    // Path: docs/data/kabkota/ch4_metana/yearly/
-    // Nama file: CH4_KabKota_Aceh_Yearly_S5P.csv
-    if (level === "kabkota" && period === "yearly") {
-      finalPath = `docs/data/kabkota/ch4_metana/yearly/CH4_KabKota_${provinceName}_Yearly_S5P.csv`;
-      isAvailable = true;
-    }
-  }
 
-  if (isAvailable) {
-    link.href = finalPath;
-    link.classList.remove("disabled");
-    notice.textContent = "";
-  } else {
-    link.removeAttribute("href");
-    link.classList.add("disabled");
-    notice.textContent = "Data Belum Tersedia untuk kombinasi ini.";
-  }
+    if (isAvailable) {
+        link.href = finalPath;
+        link.classList.remove("disabled");
+        notice.textContent = "";
+    } else {
+        link.removeAttribute("href");
+        link.classList.add("disabled");
+        notice.textContent = "Data Belum Tersedia untuk kombinasi variabel/periode ini.";
+    }
 }
 
-[variableSelect, provinceSelect, document.getElementById("levelSelect"), document.getElementById("periodSelect")].forEach(el => {
-  el.addEventListener("change", updateDownload);
-});
-
-updateDownload();
+[variableSelect, provinceSelect, document.getElementById("levelSelect"), document.getElementById("periodSelect")].forEach(el => el.addEventListener("change", updateDownload));
 </script>
-
 </body>
 </html>
