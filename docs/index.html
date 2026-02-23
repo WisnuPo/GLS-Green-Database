@@ -5,7 +5,7 @@
 <title>GLS Green Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css""")/>>
 
 <style>
 body {
@@ -70,7 +70,7 @@ select {
 }
 
 #map {
-  height: 400px;
+  height: 500px;
   border-radius: 10px;
   margin-top: 20px;
 }
@@ -94,9 +94,18 @@ footer {
 <div class="container">
 <div class="card">
 
-<h2>Nighttime Lights Dataset</h2>
+<h2 id="datasetTitle">Environmental Dataset</h2>
 
 <div class="filters">
+
+<!-- Tambahan Filter Variabel -->
+<div>
+<label>Pilih Variabel:</label><br>
+<select id="variableSelect">
+  <option value="ntl">Nighttime Lights (NTL)</option>
+  <option value="metana">Metana (CH4)</option>
+</select>
+</div>
 
 <div>
 <label>Pilih Provinsi:</label><br>
@@ -122,9 +131,7 @@ footer {
 
 </div>
 
-<a id="downloadLink"
-   class="download-btn"
-   download>
+<a id="downloadLink" class="download-btn" download>
 ⬇ Download Dataset
 </a>
 
@@ -142,7 +149,6 @@ footer {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-// 1. Tambahkan koordinat [lat, lng] untuk setiap provinsi agar peta tahu ke mana harus bergerak
 const provinceMap = {
   "Aceh": { code: "Aceh", coords: [4.6951, 96.7494] },
   "Sumatera Utara": { code: "Sumut", coords: [2.1121, 99.1777] },
@@ -185,8 +191,10 @@ const provinceMap = {
 };
 
 const provinceSelect = document.getElementById("provinceSelect");
+const variableSelect = document.getElementById("variableSelect");
+let geojsonLayer;
 
-// Isi dropdown
+// Isi dropdown provinsi
 Object.keys(provinceMap).forEach(p => {
   const option = document.createElement("option");
   option.value = p;
@@ -200,47 +208,105 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Inisialisasi Marker (kosong dulu)
+// Inisialisasi Marker
 var marker = L.marker([-2.5, 118]).addTo(map);
 
+// Load GeoJSON untuk Highlight Area
+fetch('https://raw.githubusercontent.com')
+  .then(response => response.json())
+  .then(data => {
+    geojsonLayer = L.geoJson(data, {
+      style: { color: "#ffffff", weight: 1, opacity: 1, fillColor: "#2e7d32", fillOpacity: 0.1 },
+      onEachFeature: function(feature, layer) {
+        layer.on('click', function() {
+          const clickedName = feature.properties.Propinsi.toUpperCase().trim();
+          for (let option of provinceSelect.options) {
+            if (option.value.toUpperCase().trim() === clickedName) {
+              provinceSelect.value = option.value;
+              break;
+            }
+          }
+          updateDownload();
+        });
+      }
+    }).addTo(map);
+    updateDownload();
+  });
+
 function updateDownload() {
+  const variable = variableSelect.value;
   const provinceName = provinceSelect.value;
   const level = document.getElementById("levelSelect").value;
   const period = document.getElementById("periodSelect").value;
   
   const link = document.getElementById("downloadLink");
   const notice = document.getElementById("notice");
+  const title = document.getElementById("datasetTitle");
   
-  // FITUR UPDATE PETA: Pindahkan view dan pindahkan marker
   const provinceData = provinceMap[provinceName];
+
+  // 1. UPDATE PETA (Marker & Highlight Area)
   if (provinceData) {
-    map.setView(provinceData.coords, 7); // Zoom ke level 7
-    marker.setLatLng(provinceData.coords); // Pindahkan marker ke provinsi
+    marker.setLatLng(provinceData.coords);
     marker.bindPopup(`<b>${provinceName}</b>`).openPopup();
+
+    if (geojsonLayer) {
+      geojsonLayer.eachLayer(function(layer) {
+        const geoName = layer.feature.properties.Propinsi.toUpperCase().trim();
+        const selName = provinceName.toUpperCase().trim();
+
+        if (geoName === selName) {
+          // Warna highlight: Oranye untuk NTL, Biru untuk Metana
+          const highlightColor = (variable === "ntl") ? "#ffa000" : "#00bcd4";
+          layer.setStyle({
+            color: '#1b5e20', weight: 4, opacity: 1, 
+            fillColor: highlightColor, fillOpacity: 0.5 
+          });
+          layer.bringToFront();
+          map.flyToBounds(layer.getBounds(), { padding: [50, 50] });
+        } else {
+          geojsonLayer.resetStyle(layer);
+        }
+      });
+    }
   }
 
-  // Logika Download
-  if (level === "kabkota" && period === "monthly") {
-    const fileCode = provinceData.code;
-    const filename = `NTL_KabKota_${fileCode}_Monthly.csv`;
+  // 2. LOGIKA DOWNLOAD PATH & NAMA FILE
+  let isAvailable = false;
+  let finalPath = "";
 
-    link.href = `data/kabkota/nighttime_lights/monthly/${filename}`;
+  if (variable === "ntl") {
+    title.textContent = "Nighttime Lights Dataset";
+    if (level === "kabkota" && period === "monthly") {
+      const fileCode = provinceData.code;
+      finalPath = `data/kabkota/nighttime_lights/monthly/NTL_KabKota_${fileCode}_Monthly.csv`;
+      isAvailable = true;
+    }
+  } else if (variable === "metana") {
+    title.textContent = "Methane (CH4) Dataset";
+    // Path sesuai arahan: docs/data/kabkota/ch4_metana/yearly
+    // Nama file sesuai arahan: CH4_KabKota_Aceh_Yearly_S5P.csv
+    if (level === "kabkota" && period === "yearly") {
+      finalPath = `docs/data/kabkota/ch4_metana/yearly/CH4_KabKota_${provinceName}_Yearly_S5P.csv`;
+      isAvailable = true;
+    }
+  }
+
+  if (isAvailable) {
+    link.href = finalPath;
     link.classList.remove("disabled");
     notice.textContent = "";
   } else {
     link.removeAttribute("href");
     link.classList.add("disabled");
-    notice.textContent = "Data Belum Tersedia untuk kombinasi ini.";
+    notice.textContent = "Data Belum Tersedia untuk kombinasi variabel dan periode ini.";
   }
 }
 
 // Event Listeners
-provinceSelect.addEventListener("change", updateDownload);
-document.getElementById("levelSelect").addEventListener("change", updateDownload);
-document.getElementById("periodSelect").addEventListener("change", updateDownload);
-
-// Run saat pertama kali load
-updateDownload();
+[variableSelect, provinceSelect, document.getElementById("levelSelect"), document.getElementById("periodSelect")].forEach(el => {
+  el.addEventListener("change", updateDownload);
+});
 
 </script>
 
