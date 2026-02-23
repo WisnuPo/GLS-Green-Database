@@ -73,6 +73,7 @@ select {
   height: 500px;
   border-radius: 10px;
   margin-top: 20px;
+  border: 1px solid #ddd;
 }
 
 footer {
@@ -98,7 +99,6 @@ footer {
 
 <div class="filters">
 
-<!-- Tambahan Filter Variabel -->
 <div>
 <label>Pilih Variabel:</label><br>
 <select id="variableSelect">
@@ -194,7 +194,6 @@ const provinceSelect = document.getElementById("provinceSelect");
 const variableSelect = document.getElementById("variableSelect");
 let geojsonLayer;
 
-// Isi dropdown provinsi
 Object.keys(provinceMap).forEach(p => {
   const option = document.createElement("option");
   option.value = p;
@@ -202,16 +201,14 @@ Object.keys(provinceMap).forEach(p => {
   provinceSelect.appendChild(option);
 });
 
-// Inisialisasi Map
 var map = L.map('map').setView([-2.5, 118], 5);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Inisialisasi Marker
 var marker = L.marker([-2.5, 118]).addTo(map);
 
-// Load GeoJSON untuk Highlight Area
+// Load GeoJSON Indonesia (URL Diperbaiki)
 fetch('https://raw.githubusercontent.com')
   .then(response => response.json())
   .then(data => {
@@ -245,7 +242,7 @@ function updateDownload() {
   
   const provinceData = provinceMap[provinceName];
 
-  // 1. UPDATE PETA (Marker & Highlight Area)
+  // 1. UPDATE PETA
   if (provinceData) {
     marker.setLatLng(provinceData.coords);
     marker.bindPopup(`<b>${provinceName}</b>`).openPopup();
@@ -256,7 +253,6 @@ function updateDownload() {
         const selName = provinceName.toUpperCase().trim();
 
         if (geoName === selName) {
-          // Warna highlight: Oranye untuk NTL, Biru untuk Metana
           const highlightColor = (variable === "ntl") ? "#ffa000" : "#00bcd4";
           layer.setStyle({
             color: '#1b5e20', weight: 4, opacity: 1, 
@@ -284,8 +280,8 @@ function updateDownload() {
     }
   } else if (variable === "metana") {
     title.textContent = "Methane (CH4) Dataset";
-    // Path sesuai arahan: docs/data/kabkota/ch4_metana/yearly
-    // Nama file sesuai arahan: CH4_KabKota_Aceh_Yearly_S5P.csv
+    // Path: docs/data/kabkota/ch4_metana/yearly/
+    // Nama file: CH4_KabKota_Aceh_Yearly_S5P.csv
     if (level === "kabkota" && period === "yearly") {
       finalPath = `docs/data/kabkota/ch4_metana/yearly/CH4_KabKota_${provinceName}_Yearly_S5P.csv`;
       isAvailable = true;
@@ -299,15 +295,15 @@ function updateDownload() {
   } else {
     link.removeAttribute("href");
     link.classList.add("disabled");
-    notice.textContent = "Data Belum Tersedia untuk kombinasi variabel dan periode ini.";
+    notice.textContent = "Data Belum Tersedia untuk kombinasi ini.";
   }
 }
 
-// Event Listeners
 [variableSelect, provinceSelect, document.getElementById("levelSelect"), document.getElementById("periodSelect")].forEach(el => {
   el.addEventListener("change", updateDownload);
 });
 
+updateDownload();
 </script>
 
 </body>
