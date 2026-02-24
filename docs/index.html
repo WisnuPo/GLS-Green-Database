@@ -5,7 +5,10 @@
 <title>GLS Green Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="https://unpkg.com""")/>>
+<!-- LEAFLET CSS -->
+<link rel="stylesheet"
+ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+ crossorigin=""/>
 
 <style>
 body {
@@ -70,7 +73,8 @@ select {
 }
 
 #map {
-  height: 500px;
+  height: 60vh;
+  min-height: 450px;
   border-radius: 10px;
   margin-top: 20px;
 }
@@ -98,7 +102,6 @@ footer {
 
 <div class="filters">
 
-<!-- Tambahan Filter Variabel -->
 <div>
 <label>Pilih Variabel:</label><br>
 <select id="variableSelect">
@@ -146,55 +149,32 @@ footer {
 © 2026 Green Living Support (GLS)
 </footer>
 
-<script src="https://unpkg.com"></script>
+<!-- LEAFLET JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+
+// =====================
+// PROVINCE DATA
+// =====================
+
 const provinceMap = {
   "Aceh": { code: "Aceh", coords: [4.6951, 96.7494] },
   "Sumatera Utara": { code: "Sumut", coords: [2.1121, 99.1777] },
   "Sumatera Barat": { code: "Sumbar", coords: [-0.7399, 100.8000] },
   "Riau": { code: "Riau", coords: [0.5071, 101.4478] },
-  "Kepulauan Riau": { code: "Kepri", coords: [3.9456, 108.1429] },
-  "Jambi": { code: "Jambi", coords: [-1.6186, 103.6131] },
-  "Sumatera Selatan": { code: "Sumsel", coords: [-3.3194, 104.9145] },
-  "Bangka Belitung": { code: "KepBabel", coords: [-2.7411, 106.4406] },
-  "Bengkulu": { code: "Bengkulu", coords: [-3.7928, 102.2608] },
-  "Lampung": { code: "Lampung", coords: [-4.5586, 105.4068] },
-  "DKI Jakarta": { code: "DKI_Jakarta", coords: [-6.2088, 106.8456] },
   "Jawa Barat": { code: "Jabar", coords: [-7.0909, 107.6689] },
   "Jawa Tengah": { code: "Jateng", coords: [-7.1510, 110.1403] },
-  "DI Yogyakarta": { code: "DIY", coords: [-7.8754, 110.4262] },
   "Jawa Timur": { code: "Jatim", coords: [-7.5361, 112.2384] },
-  "Banten": { code: "Banten", coords: [-6.4058, 106.0640] },
-  "Bali": { code: "Bali", coords: [-8.4095, 115.1889] },
-  "Nusa Tenggara Barat": { code: "NTB", coords: [-8.6529, 117.3616] },
-  "Nusa Tenggara Timur": { code: "NTT", coords: [-8.6574, 121.0794] },
-  "Kalimantan Barat": { code: "Kalbar", coords: [-0.2788, 109.9754] },
-  "Kalimantan Tengah": { code: "Kalteng", coords: [-1.6815, 113.3824] },
-  "Kalimantan Selatan": { code: "Kalsel", coords: [-3.0926, 115.2838] },
-  "Kalimantan Timur": { code: "Kaltim", coords: [0.5387, 116.4194] },
-  "Kalimantan Utara": { code: "Kalut", coords: [3.0731, 116.0414] },
-  "Sulawesi Utara": { code: "Sulut", coords: [0.6247, 123.9750] },
-  "Gorontalo": { code: "Gorontalo", coords: [0.6999, 122.4467] },
-  "Sulawesi Tengah": { code: "Sulteng", coords: [-1.4300, 121.4456] },
-  "Sulawesi Barat": { code: "Sulbar", coords: [-2.8440, 119.2321] },
-  "Sulawesi Selatan": { code: "Sulsel", coords: [-3.6688, 119.9741] },
-  "Sulawesi Tenggara": { code: "Sultra", coords: [-4.1449, 122.1746] },
-  "Maluku": { code: "Maluku", coords: [-3.2385, 130.1453] },
-  "Maluku Utara": { code: "Malut", coords: [1.5709, 127.8088] },
-  "Papua": { code: "Papua", coords: [-2.3048, 140.0163] },
-  "Papua Barat": { code: "PB", coords: [-1.3361, 133.1747] },
-  "Papua Selatan": { code: "PS", coords: [-7.5138, 139.0225] },
-  "Papua Tengah": { code: "PT", coords: [-3.9174, 135.9404] },
-  "Papua Pegunungan": { code: "PP", coords: [-4.0537, 139.1171] },
-  "Papua Barat Daya": { code: "PBD", coords: [-1.0503, 132.0628] }
+  "DKI Jakarta": { code: "DKI_Jakarta", coords: [-6.2088, 106.8456] },
+  "Bali": { code: "Bali", coords: [-8.4095, 115.1889] }
 };
 
-const provinceSelect = document.getElementById("provinceSelect");
-const variableSelect = document.getElementById("variableSelect");
-let geojsonLayer;
+// =====================
+// INITIALIZE DROPDOWN
+// =====================
 
-// Isi dropdown provinsi
+const provinceSelect = document.getElementById("provinceSelect");
 Object.keys(provinceMap).forEach(p => {
   const option = document.createElement("option");
   option.value = p;
@@ -202,108 +182,124 @@ Object.keys(provinceMap).forEach(p => {
   provinceSelect.appendChild(option);
 });
 
-// Inisialisasi Map
+// =====================
+// INITIALIZE MAP
+// =====================
+
 var map = L.map('map').setView([-2.5, 118], 5);
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Inisialisasi Marker
 var marker = L.marker([-2.5, 118]).addTo(map);
 
-// Load GeoJSON untuk Highlight Area (Pastikan URL benar agar peta muncul)
-fetch('https://raw.githubusercontent.com')
-  .then(response => response.json())
+let geojsonLayer;
+
+// =====================
+// LOAD GEOJSON PROVINCES
+// =====================
+
+fetch('https://raw.githubusercontent.com/superpikar/indonesia-geojson/master/indonesia-prov.geojson')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("GeoJSON gagal dimuat");
+    }
+    return response.json();
+  })
   .then(data => {
     geojsonLayer = L.geoJson(data, {
-      style: { color: "#ffffff", weight: 1, opacity: 1, fillColor: "#2e7d32", fillOpacity: 0.1 },
-      onEachFeature: function(feature, layer) {
-        layer.on('click', function() {
-          const clickedName = feature.properties.Propinsi.toUpperCase().trim();
-          for (let option of provinceSelect.options) {
-            if (option.value.toUpperCase().trim() === clickedName) {
-              provinceSelect.value = option.value;
-              break;
-            }
-          }
-          updateDownload();
-        });
+      style: {
+        color: "#ffffff",
+        weight: 1,
+        fillColor: "#2e7d32",
+        fillOpacity: 0.1
       }
     }).addTo(map);
-    updateDownload();
+  })
+  .catch(error => {
+    console.error("Error loading GeoJSON:", error);
   });
 
+// =====================
+// UPDATE DOWNLOAD & MAP
+// =====================
+
 function updateDownload() {
-  const variable = variableSelect.value;
+
+  const variable = document.getElementById("variableSelect").value;
   const provinceName = provinceSelect.value;
   const level = document.getElementById("levelSelect").value;
   const period = document.getElementById("periodSelect").value;
-  
+
   const link = document.getElementById("downloadLink");
   const notice = document.getElementById("notice");
   const title = document.getElementById("datasetTitle");
-  
+
   const provinceData = provinceMap[provinceName];
 
-  // 1. UPDATE PETA (Marker & Highlight Area)
   if (provinceData) {
+
     marker.setLatLng(provinceData.coords);
     marker.bindPopup(`<b>${provinceName}</b>`).openPopup();
 
     if (geojsonLayer) {
-      geojsonLayer.eachLayer(function(layer) {
-        const geoName = layer.feature.properties.Propinsi.toUpperCase().trim();
-        const selName = provinceName.toUpperCase().trim();
+      geojsonLayer.eachLayer(layer => {
+        if (layer.feature.properties.Propinsi === provinceName) {
 
-        if (geoName === selName) {
           const highlightColor = (variable === "ntl") ? "#ffa000" : "#00bcd4";
+
           layer.setStyle({
-            color: '#1b5e20', weight: 4, opacity: 1, 
-            fillColor: highlightColor, fillOpacity: 0.5 
+            color: '#1b5e20',
+            weight: 3,
+            fillColor: highlightColor,
+            fillOpacity: 0.5
           });
-          layer.bringToFront();
-          map.flyToBounds(layer.getBounds(), { padding: [50, 50] });
+
+          map.flyToBounds(layer.getBounds(), { padding: [40,40] });
+
         } else {
           geojsonLayer.resetStyle(layer);
         }
       });
     }
-  }
 
-  // 2. LOGIKA DOWNLOAD PATH & NAMA FILE
-  // Mapping nama file & folder sesuai struktur repositori Anda
-  const varPrefix = (variable === "ntl") ? "NTL" : "CH4";
-  const varFolder = (variable === "ntl") ? "nighttime_lights" : "metana";
-  const levelText = (level === "kabkota") ? "KabKota" : "Desa";
-  const periodText = period.charAt(0).toUpperCase() + period.slice(1);
+    const varPrefix = (variable === "ntl") ? "NTL" : "CH4";
+    const varFolder = (variable === "ntl") ? "nighttime_lights" : "metana";
+    const levelText = (level === "kabkota") ? "KabKota" : "Desa";
+    const periodText = period.charAt(0).toUpperCase() + period.slice(1);
 
-  if (provinceData) {
-    // Nama file contoh: NTL_KabKota_Aceh_Monthly.csv
     const fileName = `${varPrefix}_${levelText}_${provinceData.code}_${periodText}.csv`;
-    
-    // Path: data/kabkota/nighttime_lights/monthly/namafile.csv
     const finalPath = `data/${level}/${varFolder}/${period}/${fileName}`;
 
-    title.textContent = variable === "ntl" ? "Nighttime Lights Dataset" : "Metana (CH4) Dataset";
+    title.textContent = variable === "ntl"
+      ? "Nighttime Lights Dataset"
+      : "Metana (CH4) Dataset";
+
     link.href = finalPath;
     link.setAttribute("download", fileName);
 
-    // Filter Demo: Aktifkan hanya jika level Kabkota & periode Monthly dipilih
     if (level === "kabkota" && period === "monthly") {
       link.classList.remove("disabled");
       notice.textContent = "";
     } else {
       link.classList.add("disabled");
-      notice.textContent = "Data hanya tersedia untuk level Kabupaten/Kota dengan periode Monthly.";
+      notice.textContent =
+        "Data hanya tersedia untuk level Kabupaten/Kota dengan periode Monthly.";
     }
   }
 }
 
-// Tambahkan Event Listener agar dropdown bisa diklik
-variableSelect.addEventListener("change", updateDownload);
+// =====================
+// EVENT LISTENERS
+// =====================
+
+document.getElementById("variableSelect").addEventListener("change", updateDownload);
 provinceSelect.addEventListener("change", updateDownload);
 document.getElementById("levelSelect").addEventListener("change", updateDownload);
 document.getElementById("periodSelect").addEventListener("change", updateDownload);
+
+updateDownload();
 
 </script>
 </body>
