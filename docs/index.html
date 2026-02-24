@@ -5,10 +5,9 @@
 <title>GLS Green Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- LEAFLET CSS -->
+<!-- Leaflet CSS -->
 <link rel="stylesheet"
- href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
- crossorigin=""/>
+ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
 body {
@@ -149,29 +148,33 @@ footer {
 © 2026 Green Living Support (GLS)
 </footer>
 
-<!-- LEAFLET JS -->
+<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
 // =====================
-// PROVINCE DATA
+// PROVINCE DATA (Sesuaikan jika perlu)
 // =====================
 
 const provinceMap = {
   "Aceh": { code: "Aceh", coords: [4.6951, 96.7494] },
-  "Sumatera Utara": { code: "Sumut", coords: [2.1121, 99.1777] },
-  "Sumatera Barat": { code: "Sumbar", coords: [-0.7399, 100.8000] },
-  "Riau": { code: "Riau", coords: [0.5071, 101.4478] },
+  "Bali": { code: "Bali", coords: [-8.4095, 115.1889] },
+  "Banten": { code: "Banten", coords: [-6.4058, 106.0640] },
+  "Bengkulu": { code: "Bengkulu", coords: [-3.7928, 102.2608] },
+  "DI Yogyakarta": { code: "DIY", coords: [-7.8754, 110.4262] },
+  "DKI Jakarta": { code: "DKI_Jakarta", coords: [-6.2088, 106.8456] },
+  "Gorontalo": { code: "Gorontalo", coords: [0.6999, 122.4467] },
   "Jawa Barat": { code: "Jabar", coords: [-7.0909, 107.6689] },
+  "Jambi": { code: "Jambi", coords: [-1.6186, 103.6131] },
   "Jawa Tengah": { code: "Jateng", coords: [-7.1510, 110.1403] },
   "Jawa Timur": { code: "Jatim", coords: [-7.5361, 112.2384] },
-  "DKI Jakarta": { code: "DKI_Jakarta", coords: [-6.2088, 106.8456] },
-  "Bali": { code: "Bali", coords: [-8.4095, 115.1889] }
+  "Kalimantan Barat": { code: "Kalbar", coords: [-0.2788, 109.9754] },
+  "Kalimantan Selatan": { code: "Kalsel", coords: [-3.0926, 115.2838] }
 };
 
 // =====================
-// INITIALIZE DROPDOWN
+// INIT DROPDOWN
 // =====================
 
 const provinceSelect = document.getElementById("provinceSelect");
@@ -183,7 +186,7 @@ Object.keys(provinceMap).forEach(p => {
 });
 
 // =====================
-// INITIALIZE MAP
+// INIT MAP
 // =====================
 
 var map = L.map('map').setView([-2.5, 118], 5);
@@ -196,17 +199,8 @@ var marker = L.marker([-2.5, 118]).addTo(map);
 
 let geojsonLayer;
 
-// =====================
-// LOAD GEOJSON PROVINCES
-// =====================
-
 fetch('https://raw.githubusercontent.com/superpikar/indonesia-geojson/master/indonesia-prov.geojson')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error("GeoJSON gagal dimuat");
-    }
-    return response.json();
-  })
+  .then(response => response.json())
   .then(data => {
     geojsonLayer = L.geoJson(data, {
       style: {
@@ -216,13 +210,10 @@ fetch('https://raw.githubusercontent.com/superpikar/indonesia-geojson/master/ind
         fillOpacity: 0.1
       }
     }).addTo(map);
-  })
-  .catch(error => {
-    console.error("Error loading GeoJSON:", error);
   });
 
 // =====================
-// UPDATE DOWNLOAD & MAP
+// UPDATE FUNCTION (FINAL)
 // =====================
 
 function updateDownload() {
@@ -237,61 +228,51 @@ function updateDownload() {
   const title = document.getElementById("datasetTitle");
 
   const provinceData = provinceMap[provinceName];
+  if (!provinceData) return;
 
-  if (provinceData) {
+  marker.setLatLng(provinceData.coords);
 
-    marker.setLatLng(provinceData.coords);
-    marker.bindPopup(`<b>${provinceName}</b>`).openPopup();
+  let fileName = "";
+  let finalPath = "";
 
-    if (geojsonLayer) {
-      geojsonLayer.eachLayer(layer => {
-        if (layer.feature.properties.Propinsi === provinceName) {
+  // ===== NTL =====
+  if (variable === "ntl" && level === "kabkota" && period === "monthly") {
 
-          const highlightColor = (variable === "ntl") ? "#ffa000" : "#00bcd4";
+    fileName = `NTL_KabKota_${provinceData.code}_Monthly.csv`;
+    finalPath = `docs/data/kabkota/nighttime_lights/monthly/${fileName}`;
 
-          layer.setStyle({
-            color: '#1b5e20',
-            weight: 3,
-            fillColor: highlightColor,
-            fillOpacity: 0.5
-          });
-
-          map.flyToBounds(layer.getBounds(), { padding: [40,40] });
-
-        } else {
-          geojsonLayer.resetStyle(layer);
-        }
-      });
-    }
-
-    const varPrefix = (variable === "ntl") ? "NTL" : "CH4";
-    const varFolder = (variable === "ntl") ? "nighttime_lights" : "metana";
-    const levelText = (level === "kabkota") ? "KabKota" : "Desa";
-    const periodText = period.charAt(0).toUpperCase() + period.slice(1);
-
-    const fileName = `${varPrefix}_${levelText}_${provinceData.code}_${periodText}.csv`;
-    const finalPath = `data/${level}/${varFolder}/${period}/${fileName}`;
-
-    title.textContent = variable === "ntl"
-      ? "Nighttime Lights Dataset"
-      : "Metana (CH4) Dataset";
+    title.textContent = "Nighttime Lights Dataset";
 
     link.href = finalPath;
     link.setAttribute("download", fileName);
-
-    if (level === "kabkota" && period === "monthly") {
-      link.classList.remove("disabled");
-      notice.textContent = "";
-    } else {
-      link.classList.add("disabled");
-      notice.textContent =
-        "Data hanya tersedia untuk level Kabupaten/Kota dengan periode Monthly.";
-    }
+    link.classList.remove("disabled");
+    notice.textContent = "";
+    return;
   }
+
+  // ===== CH4 =====
+  if (variable === "metana" && level === "kabkota" && period === "yearly") {
+
+    fileName = `CH4_KabKota_${provinceData.code}_Yearly_S5P.csv`;
+    finalPath = `docs/data/kabkota/ch4_metana/yearly/${fileName}`;
+
+    title.textContent = "Metana (CH4) Dataset";
+
+    link.href = finalPath;
+    link.setAttribute("download", fileName);
+    link.classList.remove("disabled");
+    notice.textContent = "";
+    return;
+  }
+
+  // ===== NOT AVAILABLE =====
+  link.classList.add("disabled");
+  link.removeAttribute("href");
+  notice.textContent = "Kombinasi data yang dipilih belum tersedia.";
 }
 
 // =====================
-// EVENT LISTENERS
+// EVENTS
 // =====================
 
 document.getElementById("variableSelect").addEventListener("change", updateDownload);
