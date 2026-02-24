@@ -86,7 +86,7 @@ footer { text-align:center; padding:25px; background:#e8f5e9; margin-top:40px;}
 <script>
 
 // =====================
-// PROVINCE MAP (EXACT MATCH)
+// PROVINCE MAP (100% MATCH REPO)
 // =====================
 
 const provinceMap = {
@@ -170,10 +170,10 @@ marker.setLatLng(provinceData.coords);
 let fileName="";
 let finalPath="";
 
-// NTL
+// ✅ NTL (Monthly KabKota)
 if(variable==="ntl" && level==="kabkota" && period==="monthly"){
 fileName=`NTL_KabKota_${provinceData.ntl}_Monthly.csv`;
-finalPath=`docs/data/kabkota/nighttime_lights/monthly/${fileName}`;
+finalPath=`data/kabkota/nighttime_lights/monthly/${fileName}`;
 title.textContent="Nighttime Lights Dataset";
 link.href=finalPath;
 link.setAttribute("download",fileName);
@@ -182,10 +182,10 @@ notice.textContent="";
 return;
 }
 
-// CH4
+// ✅ CH4 (Yearly KabKota)
 if(variable==="metana" && level==="kabkota" && period==="yearly"){
 fileName=`CH4_KabKota_${provinceData.ch4}_Yearly_S5P.csv`;
-finalPath=`docs/data/kabkota/ch4_metana/yearly/${fileName}`;
+finalPath=`data/kabkota/ch4_metana/yearly/${fileName}`;
 title.textContent="Metana (CH4) Dataset";
 link.href=finalPath;
 link.setAttribute("download",fileName);
@@ -194,7 +194,7 @@ notice.textContent="";
 return;
 }
 
-// Not available
+// ❌ Not available
 link.classList.add("disabled");
 link.removeAttribute("href");
 notice.textContent="Kombinasi data yang dipilih belum tersedia.";
