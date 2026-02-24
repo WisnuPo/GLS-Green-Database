@@ -5,7 +5,7 @@
 <title>GLS Green Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css""")/>>
+<link rel="stylesheet" href="https://unpkg.com""")/>>
 
 <style>
 body {
@@ -61,6 +61,7 @@ select {
 .download-btn.disabled {
   background-color: grey;
   pointer-events: none;
+  opacity: 0.6;
 }
 
 .notice {
@@ -98,7 +99,7 @@ footer {
 
 <div class="filters">
 
-<!-- Tambahan Filter Variabel -->
+<!-- Filter Variabel -->
 <div>
 <label>Pilih Variabel:</label><br>
 <select id="variableSelect">
@@ -131,7 +132,7 @@ footer {
 
 </div>
 
-<a id="downloadLink" class="download-btn" download>
+<a id="downloadLink" class="download-btn" href="#" download>
 ⬇ Download Dataset
 </a>
 
@@ -146,7 +147,7 @@ footer {
 © 2026 Green Living Support (GLS)
 </footer>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com"></script>
 
 <script>
 const provinceMap = {
@@ -192,6 +193,8 @@ const provinceMap = {
 
 const provinceSelect = document.getElementById("provinceSelect");
 const variableSelect = document.getElementById("variableSelect");
+const levelSelect = document.getElementById("levelSelect");
+const periodSelect = document.getElementById("periodSelect");
 let geojsonLayer;
 
 // Isi dropdown provinsi
@@ -211,33 +214,33 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Inisialisasi Marker
 var marker = L.marker([-2.5, 118]).addTo(map);
 
-// Load GeoJSON untuk Highlight Area
-fetch('https://raw.githubusercontent.com')
-  .then(response => response.json())
-  .then(data => {
-    geojsonLayer = L.geoJson(data, {
-      style: { color: "#ffffff", weight: 1, opacity: 1, fillColor: "#2e7d32", fillOpacity: 0.1 },
-      onEachFeature: function(feature, layer) {
-        layer.on('click', function() {
-          const clickedName = feature.properties.Propinsi.toUpperCase().trim();
-          for (let option of provinceSelect.options) {
-            if (option.value.toUpperCase().trim() === clickedName) {
-              provinceSelect.value = option.value;
-              break;
-            }
-          }
-          updateDownload();
-        });
-      }
-    }).addTo(map);
-    updateDownload();
-  });
+// Load GeoJSON untuk Highlight Area (Silakan isi URL GeoJSON Anda jika ada)
+// fetch('URL_GEOJSON_ANDA_DISINI')
+//   .then(response => response.json())
+//   .then(data => {
+//     geojsonLayer = L.geoJson(data, {
+//       style: { color: "#ffffff", weight: 1, opacity: 1, fillColor: "#2e7d32", fillOpacity: 0.1 },
+//       onEachFeature: function(feature, layer) {
+//         layer.on('click', function() {
+//           const clickedName = feature.properties.Propinsi.toUpperCase().trim();
+//           for (let option of provinceSelect.options) {
+//             if (option.value.toUpperCase().trim() === clickedName) {
+//               provinceSelect.value = option.value;
+//               break;
+//             }
+//           }
+//           updateDownload();
+//         });
+//       }
+//     }).addTo(map);
+//     updateDownload();
+//   });
 
 function updateDownload() {
   const variable = variableSelect.value;
   const provinceName = provinceSelect.value;
-  const level = document.getElementById("levelSelect").value;
-  const period = document.getElementById("periodSelect").value;
+  const level = levelSelect.value;
+  const period = periodSelect.value;
   
   const link = document.getElementById("downloadLink");
   const notice = document.getElementById("notice");
@@ -256,7 +259,6 @@ function updateDownload() {
         const selName = provinceName.toUpperCase().trim();
 
         if (geoName === selName) {
-          // Warna highlight: Oranye untuk NTL, Biru untuk Metana
           const highlightColor = (variable === "ntl") ? "#ffa000" : "#00bcd4";
           layer.setStyle({
             color: '#1b5e20', weight: 4, opacity: 1, 
@@ -272,43 +274,42 @@ function updateDownload() {
   }
 
   // 2. LOGIKA DOWNLOAD PATH & NAMA FILE
-  let isAvailable = false;
-  let finalPath = "";
+  const levelText = (level === "kabkota") ? "KabKota" : "Desa";
+  const periodText = period.charAt(0).toUpperCase() + period.slice(1);
+  const varFolder = (variable === "ntl") ? "nighttime_lights" : "metana";
+  const varPrefix = (variable === "ntl") ? "NTL" : "CH4";
 
-  if (variable === "ntl") {
-    title.textContent = "Nighttime Lights Dataset";
-    if (level === "kabkota" && period === "monthly") {
-      const fileCode = provinceData.code;
-      finalPath = `data/kabkota/nighttime_lights/monthly/NTL_KabKota_${fileCode}_Monthly.csv`;
-      isAvailable = true;
-    }
-  } else if (variable === "metana") {
-    title.textContent = "Methane (CH4) Dataset";
-    // Path sesuai arahan: docs/data/kabkota/ch4_metana/yearly
-    // Nama file sesuai arahan: CH4_KabKota_Aceh_Yearly_S5P.csv
-    if (level === "kabkota" && period === "yearly") {
-      finalPath = `docs/data/kabkota/ch4_metana/yearly/CH4_KabKota_${provinceName}_Yearly_S5P.csv`;
-      isAvailable = true;
-    }
-  }
+  if (provinceData) {
+    // Format Nama File: NTL_KabKota_Aceh_Monthly.csv
+    const fileName = `${varPrefix}_${levelText}_${provinceData.code}_${periodText}.csv`;
+    
+    // Path: data/kabkota/nighttime_lights/monthly/fileName
+    const finalPath = `data/${level}/${varFolder}/${period}/${fileName}`;
 
-  if (isAvailable) {
+    title.textContent = variable === "ntl" ? "Nighttime Lights Dataset" : "Metana (CH4) Dataset";
     link.href = finalPath;
-    link.classList.remove("disabled");
-    notice.textContent = "";
-  } else {
-    link.removeAttribute("href");
-    link.classList.add("disabled");
-    notice.textContent = "Data Belum Tersedia untuk kombinasi variabel dan periode ini.";
+    link.setAttribute("download", fileName);
+
+    // Filter Demo: Hanya aktifkan download jika KabKota & Monthly terpilih
+    if (level === "kabkota" && period === "monthly") {
+      link.classList.remove("disabled");
+      notice.textContent = "";
+    } else {
+      link.classList.add("disabled");
+      notice.textContent = "Data untuk level/periode ini belum tersedia.";
+    }
   }
 }
 
-// Event Listeners
-[variableSelect, provinceSelect, document.getElementById("levelSelect"), document.getElementById("periodSelect")].forEach(el => {
-  el.addEventListener("change", updateDownload);
-});
+// 3. EVENT LISTENERS
+variableSelect.addEventListener("change", updateDownload);
+provinceSelect.addEventListener("change", updateDownload);
+levelSelect.addEventListener("change", updateDownload);
+periodSelect.addEventListener("change", updateDownload);
+
+// Jalankan saat pertama kali dimuat
+updateDownload();
 
 </script>
-
 </body>
 </html>
