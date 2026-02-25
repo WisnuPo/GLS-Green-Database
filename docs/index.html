@@ -16,29 +16,36 @@ body {
   color:#2e3d2f;
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
+
 header { 
   background:linear-gradient(135deg,#1b5e20,#2e7d32); 
   color:white; 
-  padding:70px 20px;   /* Lebih tinggi */
+  padding:25px 20px;        /* Lebih mepet */
   text-align:center;
+
+  position:sticky;          /* Sticky */
+  top:0;
+  z-index:1000;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
 
 header h1 {
-  font-size:60px;        /* Judul jauh lebih besar */
-  font-weight:900;       /* Lebih tebal */
+  font-size:48px;           /* Sedikit lebih kecil agar proporsional */
+  font-weight:900;
   letter-spacing:2px;
   margin:0;
-  text-shadow:0 4px 12px rgba(0,0,0,0.25);
+  text-shadow:0 3px 10px rgba(0,0,0,0.25);
 }
 
 header p {
-  font-size:20px;
-  margin-top:15px;
+  font-size:16px;
+  margin-top:8px;
   opacity:0.95;
 }
 
-/* CONTENT */
+/* ================= CONTENT ================= */
+
 .container { 
   max-width:1200px; 
   margin:40px auto; 
