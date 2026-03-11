@@ -268,6 +268,29 @@ notice.textContent="";
 return;
 }
 
+// ✅ NTL (Yearly KabKota) - Jawa Only
+if(variable==="ntl" && level==="kabkota" && period==="yearly"){
+
+const jawaProvinces = ["Banten","DI Yogyakarta","Jawa Barat","DKI Jakarta","Jawa Tengah","Jawa Timur"];
+
+if(jawaProvinces.includes(provinceName)){
+
+fileName=`NTL_KabKota_${provinceData.ntl}_Yearly.csv`;
+finalPath=`data/kabkota/nighttime_lights/yearly/${fileName}`;
+
+title.textContent="Nighttime Lights Dataset (Yearly)";
+
+link.href=finalPath;
+link.setAttribute("download",fileName);
+link.classList.remove("disabled");
+notice.textContent="";
+
+return;
+
+}
+
+}
+
 // ✅ CH4 (Yearly KabKota)
 if(variable==="metana" && level==="kabkota" && period==="yearly"){
 fileName=`CH4_KabKota_${provinceData.ch4}_Yearly_S5P.csv`;
