@@ -1,315 +1,322 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>GLS Green Database</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>GLS Green Database</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet"
- href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-<style>
-body { 
-  margin:0; 
-  font-family:Arial,sans-serif; 
-  background:#f4f8f4; 
-  color:#2e3d2f;
-}
+    <style>
+        :root {
+            --primary: #1e5631;       /* Hijau institusi gelap */
+            --primary-light: #4c9a2a; /* Hijau segar */
+            --bg-color: #f4f7f6;      /* Abu-abu terang agak kehijauan */
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+        }
 
-/* ================= HEADER ================= */
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
 
-header { 
-  background:linear-gradient(135deg,#1b5e20,#2e7d32); 
-  color:white; 
-  padding:25px 20px;        /* Lebih mepet */
-  text-align:center;
+        /* ================= HEADER ================= */
+        header { 
+            background: var(--surface); 
+            border-bottom: 1px solid var(--border);
+            padding: 20px 40px; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky; 
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
 
-  position:sticky;          /* Sticky */
-  top:0;
-  z-index:1000;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
-}
+        .header-brand h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
 
-header h1 {
-  font-size:48px;           /* Sedikit lebih kecil agar proporsional */
-  font-weight:900;
-  letter-spacing:2px;
-  margin:0;
-  text-shadow:0 3px 10px rgba(0,0,0,0.25);
-}
+        .header-brand p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 4px 0 0 0;
+            font-weight: 500;
+        }
 
-header p {
-  font-size:16px;
-  margin-top:8px;
-  opacity:0.95;
-}
+        /* ================= LAYOUT UTAMA ================= */
+        .container { 
+            max-width: 1300px; 
+            margin: 40px auto; 
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 320px 1fr; /* Kiri 320px, Kanan sisa ruang */
+            gap: 30px;
+        }
 
-/* ================= CONTENT ================= */
+        /* ================= PANEL FILTER (KIRI) ================= */
+        .sidebar-card { 
+            background: var(--surface); 
+            border-radius: 16px; 
+            padding: 30px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+            height: fit-content;
+        }
 
-.container { 
-  max-width:1200px; 
-  margin:40px auto; 
-  padding:0 20px;
-}
+        .sidebar-card h2 {
+            font-size: 18px;
+            margin: 0 0 24px 0;
+            color: var(--primary);
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f4f0;
+        }
 
-.card { 
-  background:white; 
-  border-radius:12px; 
-  padding:25px; 
-  box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-.filters { 
-  display:flex; 
-  flex-wrap:wrap; 
-  gap:15px; 
-  margin-bottom:20px;
-}
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-select { 
-  padding:8px; 
-  font-size:14px;
-}
+        /* Custom Dropdown Styling */
+        select { 
+            width: 100%; 
+            padding: 12px 16px; 
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-main);
+            background-color: #f9faf9;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23718096%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 10px auto;
+        }
 
-.download-btn { 
-  display:inline-block; 
-  padding:10px 18px; 
-  background:#2e7d32; 
-  color:white; 
-  text-decoration:none; 
-  border-radius:6px; 
-  font-weight:bold; 
-  margin-top:10px;
-}
+        select:focus, select:hover {
+            border-color: var(--primary-light);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(76, 154, 42, 0.1);
+        }
 
-.download-btn.disabled { 
-  background:grey; 
-  pointer-events:none;
-}
+        /* Tombol Download */
+        .download-btn { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            font-size: 15px;
+            margin-top: 30px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+            border: none;
+            cursor: pointer;
+        }
 
-.notice { 
-  margin-top:10px; 
-  font-weight:bold; 
-  color:red;
-}
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(30, 86, 49, 0.25);
+        }
 
-#map { 
-  height:60vh; 
-  min-height:450px; 
-  border-radius:10px; 
-  margin-top:20px;
-}
+        .download-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
 
-footer { 
-  text-align:center; 
-  padding:25px; 
-  background:#e8f5e9; 
-  margin-top:40px;
-}
-</style>
+        /* ================= AREA PETA (KANAN) ================= */
+        .map-card {
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .map-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+        }
+
+        .map-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--text-main);
+        }
+
+        .status-badge {
+            background: #e8f5e9;
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        #map { 
+            flex-grow: 1;
+            width: 100%;
+            height: 60vh;
+            min-height: 500px;
+            z-index: 1;
+        }
+
+        /* ================= FOOTER ================= */
+        footer { 
+            text-align: center; 
+            padding: 30px; 
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+
+        /* Responsif untuk layar HP */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            #map {
+                height: 50vh;
+                min-height: 400px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
 <header>
-<h1>GLS Green Database</h1>
-<p>Green Living Support Environmental Data Repository</p>
+    <div class="header-brand">
+        <h1>GLS Green Database</h1>
+        <p>Green Living Support Environmental Data Repository</p>
+    </div>
 </header>
 
 <div class="container">
-<div class="card">
+    
+    <div class="sidebar-card">
+        <h2>Pilih Dataset</h2>
 
-<h2 id="datasetTitle">Environmental Dataset</h2>
+        <div class="form-group">
+            <label>Variabel Data</label>
+            <select id="variableSelect">
+                <option value="ntl" selected>Nighttime Lights (NTL)</option>
+            </select>
+        </div>
 
-<div class="filters">
-<div>
-<label>Pilih Variabel:</label><br>
-<select id="variableSelect">
-<option value="ntl">Nighttime Lights (NTL)</option>
-<option value="metana">Metana (CH4)</option>
-</select>
-</div>
+        <div class="form-group">
+            <label>Wilayah Provinsi</label>
+            <select id="provinceSelect">
+                <option value="Jawa Timur" selected>Jawa Timur</option>
+            </select>
+        </div>
 
-<div>
-<label>Pilih Provinsi:</label><br>
-<select id="provinceSelect"></select>
-</div>
+        <div class="form-group">
+            <label>Level Analisis</label>
+            <select id="levelSelect">
+                <option value="kabkota" selected>Kabupaten/Kota</option>
+            </select>
+        </div>
 
-<div>
-<label>Level:</label><br>
-<select id="levelSelect">
-<option value="kabkota">Kabupaten/Kota</option>
-<option value="desa">Desa</option>
-</select>
-</div>
+        <div class="form-group">
+            <label>Periode Waktu</label>
+            <select id="periodSelect">
+                <option value="monthly" selected>Monthly (Bulanan)</option>
+            </select>
+        </div>
 
-<div>
-<label>Periode:</label><br>
-<select id="periodSelect">
-<option value="monthly">Monthly</option>
-<option value="quarterly">Quarterly</option>
-<option value="yearly">Yearly</option>
-</select>
-</div>
-</div>
+        <a id="downloadLink" class="download-btn" href="data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jatim_Monthly.csv" download="NTL_KabKota_Jatim_Monthly.csv">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            Download Dataset CSV
+        </a>
+    </div>
 
-<a id="downloadLink" class="download-btn" download>
-⬇ Download Dataset
-</a>
+    <div class="map-card">
+        <div class="map-header">
+            <h3 id="datasetTitle">Nighttime Lights (NTL) - Jawa Timur</h3>
+            <span class="status-badge">Data Ready</span>
+        </div>
+        <div id="map"></div>
+    </div>
 
-<div class="notice" id="notice"></div>
-<div id="map"></div>
-
-</div>
 </div>
 
 <footer>
-© 2026 Green Living Support (GLS)
+    © 2026 Green Living Support (GLS). All rights reserved.
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+    // =====================
+    // INISIALISASI PETA (Fokus ke Jawa Timur)
+    // =====================
+    // Koordinat tengah Jawa Timur: Latitude -7.5361, Longitude 112.2384
+    var map = L.map('map').setView([-7.5361, 112.2384], 8);
 
-// =====================
-// PROVINCE MAP (100% MATCH REPO)
-// =====================
+    // Menggunakan CartoDB Positron untuk tampilan basemap yang lebih bersih & profesional
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(map);
 
-const provinceMap = {
-"Aceh":{ntl:"Aceh",ch4:"Aceh",coords:[4.6951,96.7494]},
-"Bali":{ntl:"Bali",ch4:"Bali",coords:[-8.4095,115.1889]},
-"Banten":{ntl:"Banten",ch4:"Banten",coords:[-6.4058,106.0640]},
-"Bengkulu":{ntl:"Bengkulu",ch4:"Bengkulu",coords:[-3.7928,102.2608]},
-"DI Yogyakarta":{ntl:"DIY",ch4:"DIY",coords:[-7.8754,110.4262]},
-"DKI Jakarta":{ntl:"DKI_Jakarta",ch4:"Jakarta",coords:[-6.2088,106.8456]},
-"Gorontalo":{ntl:"Gorontalo",ch4:"Gorontalo",coords:[0.6999,122.4467]},
-"Jambi":{ntl:"Jambi",ch4:"Jambi",coords:[-1.6186,103.6131]},
-"Jawa Barat":{ntl:"Jabar",ch4:"Jabar",coords:[-7.0909,107.6689]},
-"Jawa Tengah":{ntl:"Jateng",ch4:"Jateng",coords:[-7.1510,110.1403]},
-"Jawa Timur":{ntl:"Jatim",ch4:"Jatim",coords:[-7.5361,112.2384]},
-"Kalimantan Barat":{ntl:"Kalbar",ch4:"Kalbar",coords:[-0.2788,109.9754]},
-"Kalimantan Selatan":{ntl:"Kalsel",ch4:"Kalsel",coords:[-3.0926,115.2838]},
-"Kalimantan Tengah":{ntl:"Kalteng",ch4:"Kalteng",coords:[-1.6815,113.3824]},
-"Kalimantan Timur":{ntl:"Kaltim",ch4:"Kaltim",coords:[0.5387,116.4194]},
-"Kalimantan Utara":{ntl:"Kalut",ch4:"Kalut",coords:[3.0731,116.0414]},
-"Kepulauan Bangka Belitung":{ntl:"KepBabel",ch4:"KepBabel",coords:[-2.7411,106.4406]},
-"Kepulauan Riau":{ntl:"Kepri",ch4:"Kepri",coords:[3.9456,108.1429]},
-"Lampung":{ntl:"Lampung",ch4:"Lampung",coords:[-4.5586,105.4068]},
-"Maluku Utara":{ntl:"Malut",ch4:"Malut",coords:[1.5709,127.8088]},
-"Nusa Tenggara Barat":{ntl:"NTB",ch4:"NTB",coords:[-8.6529,117.3616]},
-"Nusa Tenggara Timur":{ntl:"NTT",ch4:"NTT",coords:[-8.6574,121.0794]},
-"Papua":{ntl:"Papua",ch4:"Papua",coords:[-2.3048,140.0163]},
-"Papua Barat":{ntl:"PB",ch4:"PB",coords:[-1.3361,133.1747]},
-"Papua Barat Daya":{ntl:"PBD",ch4:"PBD",coords:[-1.0503,132.0628]},
-"Papua Pegunungan":{ntl:"PP",ch4:"PP",coords:[-4.0537,139.1171]},
-"Papua Selatan":{ntl:"PS",ch4:"PS",coords:[-7.5138,139.0225]},
-"Papua Tengah":{ntl:"PT",ch4:"PT",coords:[-3.9174,135.9404]},
-"Riau":{ntl:"Riau",ch4:"Riau",coords:[0.5071,101.4478]},
-"Sulawesi Barat":{ntl:"Sulbar",ch4:"Sulbar",coords:[-2.8440,119.2321]},
-"Sulawesi Selatan":{ntl:"Sulsel",ch4:"Sulsel",coords:[-3.6688,119.9741]},
-"Sulawesi Tengah":{ntl:"Sulteng",ch4:"Sulteng",coords:[-1.4300,121.4456]},
-"Sulawesi Tenggara":{ntl:"Sultra",ch4:"Sultra",coords:[-4.1449,122.1746]},
-"Sulawesi Utara":{ntl:"Sulut",ch4:"Sulut",coords:[0.6247,123.9750]},
-"Sumatera Barat":{ntl:"Sumbar",ch4:"Sumbar",coords:[-0.7399,100.8000]},
-"Sumatera Selatan":{ntl:"Sumsel",ch4:"Sumsel",coords:[-3.3194,104.9145]},
-"Sumatera Utara":{ntl:"Sumut",ch4:"Sumut",coords:[2.1121,99.1777]}
-};
+    // Menambahkan Marker di Jawa Timur dengan Popup Informasi
+    var marker = L.marker([-7.5361, 112.2384]).addTo(map);
+    marker.bindPopup(`
+        <div style="text-align: center; font-family: 'Inter', sans-serif;">
+            <b style="color: #1e5631; font-size: 14px;">Jawa Timur</b><br>
+            <span style="color: #718096; font-size: 12px;">Data Available: NTL (Monthly)</span>
+        </div>
+    `).openPopup();
 
-// =====================
-// INIT DROPDOWN
-// =====================
-
-const provinceSelect=document.getElementById("provinceSelect");
-Object.keys(provinceMap).forEach(p=>{
-const opt=document.createElement("option");
-opt.value=p; opt.textContent=p;
-provinceSelect.appendChild(opt);
-});
-
-// =====================
-// MAP
-// =====================
-
-var map=L.map('map').setView([-2.5,118],5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
-var marker=L.marker([-2.5,118]).addTo(map);
-
-// =====================
-// UPDATE FUNCTION
-// =====================
-
-function updateDownload(){
-
-const variable=document.getElementById("variableSelect").value;
-const provinceName=provinceSelect.value;
-const level=document.getElementById("levelSelect").value;
-const period=document.getElementById("periodSelect").value;
-const link=document.getElementById("downloadLink");
-const notice=document.getElementById("notice");
-const title=document.getElementById("datasetTitle");
-
-const provinceData=provinceMap[provinceName];
-if(!provinceData) return;
-
-marker.setLatLng(provinceData.coords);
-
-let fileName="";
-let finalPath="";
-
-// ✅ NTL (Monthly KabKota)
-if(variable==="ntl" && level==="kabkota" && period==="monthly"){
-fileName=`NTL_KabKota_${provinceData.ntl}_Monthly.csv`;
-finalPath=`data/kabkota/nighttime_lights/monthly/${fileName}`;
-title.textContent="Nighttime Lights Dataset";
-link.href=finalPath;
-link.setAttribute("download",fileName);
-link.classList.remove("disabled");
-notice.textContent="";
-return;
-}
-
-// ✅ NTL (Yearly KabKota) - Jawa Only
-if(variable==="ntl" && level==="kabkota" && period==="yearly"){
-const jawaProvinces = ["Banten","DI Yogyakarta","Jawa Barat","DKI Jakarta","Jawa Tengah","Jawa Timur"];
-if(jawaProvinces.includes(provinceName)){
-fileName=`NTL_KabKota_${provinceData.ntl}_Yearly.csv`;
-finalPath=`data/kabkota/nighttime_lights/yearly/${fileName}`;
-title.textContent="Nighttime Lights Dataset";
-link.href=finalPath;
-link.setAttribute("download",fileName);
-link.classList.remove("disabled");
-notice.textContent="";
-return;
-
-}
-
-}
-
-// ✅ CH4 (Yearly KabKota)
-if(variable==="metana" && level==="kabkota" && period==="yearly"){
-fileName=`CH4_KabKota_${provinceData.ch4}_Yearly_S5P.csv`;
-finalPath=`data/kabkota/ch4_metana/yearly/${fileName}`;
-title.textContent="Metana (CH4) Dataset";
-link.href=finalPath;
-link.setAttribute("download",fileName);
-link.classList.remove("disabled");
-notice.textContent="";
-return;
-}
-
-// ❌ Not available
-link.classList.add("disabled");
-link.removeAttribute("href");
-notice.textContent="Kombinasi data yang dipilih belum tersedia.";
-}
-
-document.getElementById("variableSelect").addEventListener("change",updateDownload);
-provinceSelect.addEventListener("change",updateDownload);
-document.getElementById("levelSelect").addEventListener("change",updateDownload);
-document.getElementById("periodSelect").addEventListener("change",updateDownload);
-
-updateDownload();
-
+    // Catatan: Script fungsi update dinamis (updateDownload) saya hilangkan sementara 
+    // karena sesuai permintaan, halaman ini khusus difokuskan untuk 
+    // mendemonstrasikan data NTL Jawa Timur Monthly saja secara statis.
 </script>
+
 </body>
 </html>
