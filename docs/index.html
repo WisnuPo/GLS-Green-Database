@@ -262,11 +262,11 @@
         <div class="form-group">
             <label>Periode Waktu</label>
             <select id="periodSelect">
-                <option value="monthly" selected>Monthly (Bulanan)</option>
+                <option value="yearly" selected>Yearly (Tahunan)</option>
             </select>
         </div>
 
-        <a id="downloadLink" class="download-btn" href="data/kabkota/nighttime_lights/monthly/NTL_KabKota_Jatim_Monthly.csv" download="NTL_KabKota_Jatim_Monthly.csv">
+        <a id="downloadLink" class="download-btn" href="data/kabkota/nighttime_lights/yearly/NTL_KabKota_Jatim_Yearly.csv" download="NTL_KabKota_Jatim_Yearly.csv">
             <svg viewBox="0 0 24 24">
                 <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
             </svg>
@@ -304,18 +304,14 @@
         maxZoom: 19
     }).addTo(map);
 
-    // Menambahkan Marker di Jawa Timur dengan Popup Informasi
+    // Menambahkan Marker di Jawa Timur dengan Popup Informasi (Disesuaikan ke Yearly)
     var marker = L.marker([-7.5361, 112.2384]).addTo(map);
     marker.bindPopup(`
         <div style="text-align: center; font-family: 'Inter', sans-serif;">
             <b style="color: #1e5631; font-size: 14px;">Jawa Timur</b><br>
-            <span style="color: #718096; font-size: 12px;">Data Available: NTL (Monthly)</span>
+            <span style="color: #718096; font-size: 12px;">Data Available: NTL (Yearly)</span>
         </div>
     `).openPopup();
-
-    // Catatan: Script fungsi update dinamis (updateDownload) saya hilangkan sementara 
-    // karena sesuai permintaan, halaman ini khusus difokuskan untuk 
-    // mendemonstrasikan data NTL Jawa Timur Monthly saja secara statis.
 </script>
 
 </body>
