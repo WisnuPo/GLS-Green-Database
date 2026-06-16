@@ -158,6 +158,35 @@
             fill: currentColor;
         }
 
+        /* Notice Demo Box */
+        .demo-notice {
+            margin-top: 25px;
+            padding: 15px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .demo-notice strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .demo-notice a {
+            color: var(--primary-light);
+            font-weight: 600;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .demo-notice a:hover {
+            text-decoration: underline;
+        }
+
         /* ================= AREA PETA (KANAN) ================= */
         .map-card {
             background: var(--surface);
@@ -272,6 +301,12 @@
             </svg>
             Download Dataset CSV
         </a>
+
+        <div class="demo-notice">
+            <strong>ℹ️ Versi Demonstrasi</strong>
+            Data yang tersedia di halaman ini hanya merupakan sampel awal. Untuk memperoleh akses ke basis data lingkungan yang lebih lengkap, silakan hubungi GLS melalui email: <br>
+            <a href="mailto:admin@greenlivingsupport.org">admin@greenlivingsupport.org</a>
+        </div>
     </div>
 
     <div class="map-card">
@@ -304,7 +339,7 @@
         maxZoom: 19
     }).addTo(map);
 
-    // Menambahkan Marker di Jawa Timur dengan Popup Informasi (Disesuaikan ke Yearly)
+    // Menambahkan Marker di Jawa Timur dengan Popup Informasi
     var marker = L.marker([-7.5361, 112.2384]).addTo(map);
     marker.bindPopup(`
         <div style="text-align: center; font-family: 'Inter', sans-serif;">
