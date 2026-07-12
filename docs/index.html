@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>GLS Green Database</title>
+    <title>GLS Indonesian Subnational Green Database</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -158,6 +158,39 @@
             fill: currentColor;
         }
 
+        /* Tombol Metadata (Baru) */
+        .metadata-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            border: 2px solid var(--primary-light);
+            cursor: pointer;
+        }
+
+        .metadata-btn:hover {
+            background: var(--primary-light);
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 154, 42, 0.2);
+        }
+
+        .metadata-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
         /* Notice Demo Box */
         .demo-notice {
             margin-top: 25px;
@@ -257,7 +290,7 @@
 
 <header>
     <div class="header-brand">
-        <h1>GLS Green Database</h1>
+        <h1>GLS Indonesian Subnational Green Database</h1>
         <p>Green Living Support Environmental Data Repository</p>
     </div>
 </header>
@@ -295,11 +328,20 @@
             </select>
         </div>
 
+        <!-- Tombol Download Dataset -->
         <a id="downloadLink" class="download-btn" href="data/kabkota/nighttime_lights/yearly/NTL_KabKota_Jatim_Yearly.csv" download="NTL_KabKota_Jatim_Yearly.csv">
             <svg viewBox="0 0 24 24">
                 <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
             </svg>
             Download Dataset CSV
+        </a>
+
+        <!-- Tombol Metadata Baru -->
+        <a id="metadataLink" class="metadata-btn" href="https://drive.google.com/file/d/1vTGwomtRPU6yUX_Cyfecom7AD52LnJOm/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+            Lihat Dokumen Metadata
         </a>
 
         <div class="demo-notice">
